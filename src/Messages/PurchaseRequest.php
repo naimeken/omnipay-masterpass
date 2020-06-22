@@ -19,7 +19,11 @@ class PurchaseRequest extends AbstractRequest
     public function getData()
     {
         try {
-            $this->checkMdStatus($this->getBankIca(), $this->getMdStatus());
+            if ($this->getPaymentType() == '3d') {
+                $this->checkMdStatus($this->getBankIca(), $this->getMdStatus());
+                $this->hashControl($this->getBankIca());
+            }
+
             $headerParams = [
                 'client_id' => $this->getClientId(),
                 'request_datetime' => gmdate("Y-m-d\TH:i:s") . date("P"),
@@ -40,7 +44,7 @@ class PurchaseRequest extends AbstractRequest
                 'installment_count' => null,
                 'bank_ica' => $this->getBankIca(),
                 'token' => $this->getToken(),
-                'msisdn' => null,
+                'msisdn' => $this->getPhone(),
                 'asseco_order_details' => null,
                 'order_details' => null,
                 'bill_detail' => null,
@@ -167,6 +171,40 @@ class PurchaseRequest extends AbstractRequest
     }
 
     /**
+     * @param string $value
+     * @return PurchaseRequest
+     */
+    public function setMerchantStoreKey(string $value): PurchaseRequest
+    {
+        return $this->setParameter('merchantStoreKey', $value);
+    }
+
+    /**
+     * @return string
+     */
+    public function getMerchantStoreKey(): string
+    {
+        return $this->getParameter('merchantStoreKey');
+    }
+
+    /**
+     * @param array $value
+     * @return PurchaseRequest
+     */
+    public function setHashResponse(array $value): PurchaseRequest
+    {
+        return $this->setParameter('hashResponse', $value);
+    }
+
+    /**
+     * @return array
+     */
+    public function getHashResponse(): array
+    {
+        return $this->getParameter('hashResponse');
+    }
+
+    /**
      * @return array
      */
     private function getPaymentTypes(): array
@@ -186,32 +224,53 @@ class PurchaseRequest extends AbstractRequest
     private function checkMdStatus(string $bankIca, string $mdStatus): bool
     {
         if (empty($bankIca)) {
-            throw new Exception('Bank Tanımı Gönderilmemiş');
+            throw new Exception('Not found bank value');
         }
 
-        $successStatusCodes = [];
-        switch ($bankIca) {
-            case '2030': //garantibank
-            case '2110': //akbank
-            case '3771': //işbank
-            case '1684': //finansbank
-            case '9165': //TEB
-            case '3039': //Halkbank
-            case '7656': //HSBC
-                $successStatusCodes = [1, 2, 3, 4];
-                break;
-            default:
-                break;
-        }
+        $successStatusCodes = [1, 2, 3, 4];
 
-        if (empty($successStatusCodes)) {
-            throw new Exception('Undefined 3DSecure verification for bank');
-        }
-
-        if (!(isset($successStatusCodes[$mdStatus]))) {
+        if (!in_array($bankIca, $this->getBankIcaList()) && !(isset($successStatusCodes[$mdStatus]))) {
             throw new Exception('3DSecure verification error');
         }
 
         return true;
+    }
+
+    /**
+     * @param string $bankIca
+     * @return bool
+     * @throws Exception
+     */
+    private function hashControl(string $bankIca): bool
+    {
+        if (empty($this->getHashResponse()['hashParams'])) {
+            throw new Exception ('Hash params error');
+        }
+
+        if (in_array($bankIca, $this->getBankIcaList())) {
+            $calculatedHashParams = '';
+            $params = explode(':', $this->getHashResponse()['hashParams']);
+            foreach ($params as $param) {
+                $calculatedHashParams .= $this->getHashResponse()[$param] ?? '';
+            }
+
+            $calculatedHashParams .= $this->getMerchantStoreKey();
+            $hashCalculated = base64_encode(sha1($calculatedHashParams, true));
+            if ($hashCalculated != $this->getHashResponse()['hash']) {
+                throw new Exception ('Not equal calculated hash and hash');
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @return array
+     */
+    private function getBankIcaList(): array
+    {
+        return ['2030', '2110', '3771', '1684', '9165', '3039', '7656'];
     }
 }

@@ -12,12 +12,12 @@ class AuthorizeResponse extends AbstractResponse
      */
     public function getToken(): string
     {
-        $msisdn = $this->createValidMsidn($this->getPhone());
+        $phone = $this->createValidPHone();
         $dateTime = date('YmdHis');
         $data = 'FF01' . $this->specPadLen($this->getClientId()) . $this->specToBHex($this->getClientId())
-            . 'FF02' . '01' . $this->getTimeZone()->hex
+            . 'FF02' . '01' . $this->getTimeZone()
             . 'FF03' . $this->specPadLen($dateTime) . $this->specToBHex($dateTime)
-            . 'FF04' . $this->specPadLen($msisdn) . $this->specToBHex($msisdn) //msisdn
+            . 'FF04' . $this->specPadLen($phone) . $this->specToBHex($phone)
             . 'FF05' . $this->specPadLen($this->getTransactionReference()) . $this->specToBHex($this->getTransactionReference())
             . 'FF06' . $this->specPadLen($this->getUserId()) . $this->specToBHex($this->getUserId())
             . 'FF07' . '01' . '00';
@@ -27,25 +27,7 @@ class AuthorizeResponse extends AbstractResponse
             $padC = ceil(strlen($data) / 32) * 32;
             $data = str_pad($data, $padC, '0', STR_PAD_RIGHT);
         }
-
-        $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-256-cbc'));
-        $encryptData = openssl_encrypt($data, 'aes-256-cbc', $this->getEncKey(), 0, $iv);
-        $encryptData = strtoupper(bin2hex($encryptData));
-        $macKey = hash_hmac("SHA1", $encryptData, $this->getMacKey());
-
-        return $encryptData . strtoupper($macKey);
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getTransactionReference(): ?string
-    {
-        if (!empty($this->data['reference_number'])) {
-            return $this->data['reference_number'];
-        }
-
-        return null;
+        return $this->prepareToken($data);
     }
 
     /**
@@ -108,60 +90,87 @@ class AuthorizeResponse extends AbstractResponse
         return null;
     }
 
+
     /**
-     * @return object
+     * @return string
      */
-    private function getTimeZone()
+    private function getTimeZone(): string
     {
         $p = date("P");
         $x = explode(':', $p);
         $dif = $x[0];
         $f = substr($dif, 0, 1);
         $s = substr($dif, 1);
-        $rTime = '';
+
         if ($f == '-') {
             $rTime = '8';
         } else {
             $rTime = '0';
         }
+
         $rTime .= dechex($s);
 
-        $ret = array(
-            'hex' => $rTime,
-            'dif' => $dif
-        );
-        return (object)$ret;
+        return $rTime;
     }
 
-    private function specPadLen($value, $pad = 2)
+    /**
+     * @param string $value
+     * @param int $pad
+     * @return string
+     */
+    private function specPadLen(string $value, int $pad = 2): string
     {
         $len = strlen($value);
         $dLen = strtoupper(dechex($len));
         return str_pad($dLen, $pad, '0', STR_PAD_LEFT);
     }
 
-    private function specToBHex($str)
+    /**
+     * @param string $str
+     * @return string
+     */
+    private function specToBHex(string $str): string
     {
-        $str = (string)$str;
         return strtoupper(bin2hex($str));
     }
 
-    private function createValidMsidn(string $msidn)
+    /**
+     * @return string
+     */
+    private function createValidPHone(): string
     {
-        //örn : 905556667788
-        $msidn = preg_replace('/[^0-9]/', '', $msidn);
-        if (substr($msidn, 0, 2) == '00') {
-            $msidn = substr($msidn, 2);
+        $phone = preg_replace('/[^0-9]/', '', $this->getPhone());
+
+        if (substr($phone, 0, 2) == '00') {
+            $phone = substr($phone, 2);
         } else {
-            if (substr($msidn, 0, 1) == '0') {
-                $msidn = substr($msidn, 1);
+            if (substr($phone, 0, 1) == '0') {
+                $phone = substr($phone, 1);
             }
         }
 
-        if (strlen($msidn) == 10) {
-            return '90' . $msidn;
+        if (strlen($phone) == 10) {
+            return '90' . $phone;
         }
-        return $msidn;
+
+        return $phone;
     }
 
+    /**
+     * @param string $data
+     * @return string
+     */
+    private function prepareToken(string $data): string
+    {
+        $iv = '00000000000000000000000000000000';
+        $iv = pack('H*', $iv);
+        $encKey = $this->getEncKey();
+        $encKey = pack('H*', $encKey);
+        $packData = pack('H*', $data);
+        $encryptData = openssl_encrypt($packData, 'aes-128-cbc', $encKey, OPENSSL_RAW_DATA, $iv);
+        $encryptData2 = strtoupper($encryptData);
+        $macKey = hash_hmac("SHA1", $encryptData2, $this->getMacKey());
+
+        return $encryptData2 . strtoupper($macKey);
+    }
 }
