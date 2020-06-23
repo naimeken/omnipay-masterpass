@@ -104,4 +104,21 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
             throw new InvalidResponseException($e->getMessage());
         }
     }
+
+    /**
+     * @param string $value
+     * @return AbstractRequest
+     */
+    public function setPhone(string $value): AbstractRequest
+    {
+        return $this->setParameter('phone', $value);
+    }
+
+    /**
+     * @return string
+     */
+    public function getPhone(): string
+    {
+        return $this->getParameter('phone');
+    }
 }

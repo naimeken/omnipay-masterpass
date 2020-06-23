@@ -28,12 +28,12 @@ class GatewayTest extends GatewayTestCase
     public function testAuthorize()
     {
         $this->options = [
-            'transactionReference' => '8443343542',
+            'transactionReference' => '12345',
             'sendSms' => 'Y',
             'sendSmsLanguage' => 'tur',
             'userId' => '1',
             'mode' => 'test',
-            'macKey' => 'xxxxx',
+            'macKey' => 'xxxx',
             'encKey' => 'xxxx',
             'phone' => 'xxxx'
         ];
@@ -46,17 +46,31 @@ class GatewayTest extends GatewayTestCase
     public function testPurchase()
     {
         $this->options = [
-            'transactionReference' => '8443343542',
+            'transactionReference' => '54564564',
             'sendSms' => 'Y',
             'sendSmsLanguage' => 'tur',
-            'clientIp' => '35.233.121.12',
+            'clientIp' => 'xxxx',
             'mode' => 'test',
             'macro_merchant_id' => 'xxxxx',
-            'bank_ica' => '2030',
+            'bank_ica' => 'xxxx',
             'payment_type' => '3d',
-            'amount' => '10',
+            'amount' => '4599',
             'mdStatus' => '1',
-            'token' => 'xxxxx'
+            'token' => 'xxxx',
+            'phone' => 'xxxx',
+            'merchantStoreKey' => "xxxx",
+            'hashResponse' => [
+                'clientid' => $this->gateway->getClientId(),
+                'oid' => '',
+                'authcode' => '',
+                'procreturncode' => '',
+                'response' => '',
+                'mdstatus' => '',
+                'cavv' => '',
+                'eci' => '',
+                'md' => '',
+                'rnd' => ''
+            ]
         ];
 
         /** @var PurchaseResponse $response */

@@ -127,22 +127,5 @@ class AuthorizeRequest extends AbstractRequest
     {
         return $this->getParameter('userId');
     }
-
-    /**
-     * @param string $value
-     * @return AuthorizeRequest
-     */
-    public function setPhone(string $value): AuthorizeRequest
-    {
-        return $this->setParameter('phone', $value);
-    }
-
-    /**
-     * @return string
-     */
-    public function getPhone(): string
-    {
-        return $this->getParameter('phone');
-    }
 }
 
