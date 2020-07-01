@@ -1,5 +1,5 @@
 {
-  "name": "omnipay/masterpass",
+  "name": "alegra/omnipay-masterpass",
   "type": "library",
   "description": "Masterpass gateway for Omnipay payment processing library",
   "homepage": "https://github.com/alegraio/omnipay-masterpass",
@@ -14,8 +14,7 @@
     "ext-json": "*",
     "ext-simplexml": "*",
     "ext-soap": "*",
-    "ext-openssl": "*",
-    "ext-mcrypt": "*"
+    "ext-openssl": "*"
   },
   "require-dev": {
     "omnipay/tests": "^3",
