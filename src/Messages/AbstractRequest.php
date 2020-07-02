@@ -5,17 +5,19 @@
 
 namespace Omnipay\Masterpass\Messages;
 
+use Exception;
 use Omnipay\Common\Exception\InvalidResponseException;
 
 abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
 {
     use BaseSoapService;
 
+    public const BASE = 'MMIUIMasterPass_V2/MerchantServices/';
     /** @var array */
     private $serviceList = [
-        "test" => 'https://test.masterpassturkiye.com/',
-        "uat" => 'https://uatmmi.masterpassturkiye.com/',
-        "prod" => 'https://prod.masterpassturkiye.com/'
+        'test' => 'https://test.masterpassturkiye.com/',
+        'uat' => 'https://uatmmi.masterpassturkiye.com/',
+        'prod' => 'https://prod.masterpassturkiye.com/'
     ];
 
     /**
@@ -30,7 +32,7 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
      * @param string $value
      * @return AbstractRequest
      */
-    public function setClientId(string $value)
+    public function setClientId(string $value): AbstractRequest
     {
         return $this->setParameter('clientId', $value);
     }
@@ -40,7 +42,8 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
      */
     public function getMode(): string
     {
-        $mode = $this->getParameter('mode') ?: 'prod';
+        $testMode = ($this->getTestMode() === true) ? 'test' : null;
+        $mode = $this->getParameter('mode') ?? $testMode ?? 'prod';
 
         return $this->serviceList[$mode];
     }
@@ -49,7 +52,7 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
      * @param string $value
      * @return AbstractRequest
      */
-    public function setMode(string $value)
+    public function setMode(string $value): AbstractRequest
     {
         return $this->setParameter('mode', $value);
     }
@@ -97,10 +100,10 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
     {
         try {
             $response = $this->makeRequestToService($this->getEndpoint(), $this->getFunction(), $data);
-            $method = $this->getFunction() . "Response";
+            $method = $this->getFunction() . 'Response';
 
             return property_exists($response, $method) ? (array)$response->$method : (array)$response;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw new InvalidResponseException($e->getMessage());
         }
     }

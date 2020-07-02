@@ -5,11 +5,15 @@
 
 namespace Omnipay\Masterpass\Messages;
 
+use Exception;
 use Omnipay\Common\Exception\InvalidResponseException;
 use Omnipay\Common\Message\ResponseInterface;
 
 class AuthorizeRequest extends AbstractRequest
 {
+
+    public const ENDPOINT = self::BASE . 'MPGGenerateKeyService.asmx?wsdl';
+
     /**
      * @return array
      */
@@ -24,7 +28,7 @@ class AuthorizeRequest extends AbstractRequest
         );
 
         return [
-            "GenerateKeyRequest" => [
+            'GenerateKeyRequest' => [
                 'transaction_header' => $headerParams
             ]
         ];
@@ -35,7 +39,7 @@ class AuthorizeRequest extends AbstractRequest
      */
     public function getEndpoint(): string
     {
-        return $this->getMode() . "MMIUIMasterPass_V2/MerchantServices/MPGGenerateKeyService.asmx?wsdl";
+        return $this->getMode() . self::ENDPOINT;
     }
 
     /**
@@ -62,14 +66,14 @@ class AuthorizeRequest extends AbstractRequest
             ];
 
             $response = ($this->getEncKey() && $this->getMacKey()) ? [
-                "mac_key" => $this->getMacKey(),
-                "encryption_key" => $this->getEncKey(),
+                'mac_key' => $this->getMacKey(),
+                'encryption_key' => $this->getEncKey(),
             ] : $this->getResult($data);
 
             $response = array_merge($response, $tokenNeedingInfos);
 
             return new AuthorizeResponse($this, array_unique($response));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw new InvalidResponseException(
                 'Error communicating with payment gateway: ' . $e->getMessage(),
                 $e->getCode()
