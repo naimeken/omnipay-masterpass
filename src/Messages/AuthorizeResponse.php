@@ -58,9 +58,9 @@ class AuthorizeResponse extends AbstractResponse
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getEncKey(): string
+    public function getEncKey(): ?string
     {
         if (!empty($this->data['encryption_key'])) {
             return $this->data['encryption_key'];
@@ -70,9 +70,9 @@ class AuthorizeResponse extends AbstractResponse
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getMacKey(): string
+    public function getMacKey(): ?string
     {
         if (!empty($this->data['mac_key'])) {
             return $this->data['mac_key'];
@@ -82,9 +82,9 @@ class AuthorizeResponse extends AbstractResponse
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getPhone(): string
+    public function getPhone(): ?string
     {
         if (!empty($this->data['phone'])) {
             return $this->data['phone'];
