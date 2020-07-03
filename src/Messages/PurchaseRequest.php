@@ -9,24 +9,26 @@ use Omnipay\Common\Exception\InvalidRequestException;
 use Omnipay\Common\Exception\InvalidResponseException;
 use Omnipay\Common\Message\ResponseInterface;
 use Exception;
+use RuntimeException;
 
 class PurchaseRequest extends AbstractRequest
 {
+    public const ENDPOINT = self::BASE . 'MPGCommitPurchaseService.asmx?wsdl';
     /**
      * @return array|mixed
-     * @throws \Exception
+     * @throws Exception
      */
     public function getData()
     {
         try {
-            if ($this->getPaymentType() == '3d') {
+            if ($this->getPaymentType() === '3d') {
                 $this->checkMdStatus($this->getBankIca(), $this->getMdStatus());
                 $this->hashControl($this->getBankIca());
             }
 
             $headerParams = [
                 'client_id' => $this->getClientId(),
-                'request_datetime' => gmdate("Y-m-d\TH:i:s") . date("P"),
+                'request_datetime' => gmdate("Y-m-d\TH:i:s") . date('P'),
                 'request_reference_no' => $this->getTransactionReference(),
                 'send_sms' => $this->getSendSms(),
                 'send_sms_language' => $this->getSendSmsLanguage(),
@@ -57,13 +59,13 @@ class PurchaseRequest extends AbstractRequest
             ];
 
             return [
-                "CommitPurchaseRequest" => [
+                'CommitPurchaseRequest' => [
                     'transaction_header' => $headerParams,
                     'transaction_body' => $bodyParams
                 ]
             ];
         } catch (InvalidRequestException $e) {
-            throw new \Exception($e->getMessage());
+            throw new RuntimeException($e->getMessage());
         }
     }
 
@@ -72,7 +74,7 @@ class PurchaseRequest extends AbstractRequest
      */
     public function getEndpoint(): string
     {
-        return $this->getMode() . "MMIUIMasterPass_V2/MerchantServices/MPGCommitPurchaseService.asmx?wsdl";
+        return $this->getMode() . self::ENDPOINT;
     }
 
     /**
@@ -94,7 +96,7 @@ class PurchaseRequest extends AbstractRequest
             $response = $this->getResult($data);
 
             return new PurchaseResponse($this, $response);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw new InvalidResponseException(
                 'Error communicating with payment gateway: ' . $e->getMessage(),
                 $e->getCode()
@@ -224,13 +226,13 @@ class PurchaseRequest extends AbstractRequest
     private function checkMdStatus(string $bankIca, string $mdStatus): bool
     {
         if (empty($bankIca)) {
-            throw new Exception('Not found bank value');
+            throw new RuntimeException('Not found bank value');
         }
 
         $successStatusCodes = [1, 2, 3, 4];
 
-        if (!in_array($bankIca, $this->getBankIcaList()) && !(isset($successStatusCodes[$mdStatus]))) {
-            throw new Exception('3DSecure verification error');
+        if (!(isset($successStatusCodes[$mdStatus])) && !in_array($bankIca, $this->getBankIcaList(), true)) {
+            throw new RuntimeException('3DSecure verification error');
         }
 
         return true;
@@ -244,10 +246,10 @@ class PurchaseRequest extends AbstractRequest
     private function hashControl(string $bankIca): bool
     {
         if (empty($this->getHashResponse()['hashParams'])) {
-            throw new Exception ('Hash params error');
+            throw new RuntimeException ('Hash params error');
         }
 
-        if (in_array($bankIca, $this->getBankIcaList())) {
+        if (in_array($bankIca, $this->getBankIcaList(), true)) {
             $calculatedHashParams = '';
             $params = explode(':', $this->getHashResponse()['hashParams']);
             foreach ($params as $param) {
@@ -256,8 +258,8 @@ class PurchaseRequest extends AbstractRequest
 
             $calculatedHashParams .= $this->getMerchantStoreKey();
             $hashCalculated = base64_encode(sha1($calculatedHashParams, true));
-            if ($hashCalculated != $this->getHashResponse()['hash']) {
-                throw new Exception ('Not equal calculated hash and hash');
+            if ($hashCalculated !== $this->getHashResponse()['hash']) {
+                throw new RuntimeException ('Not equal calculated hash and hash');
             }
 
             return true;

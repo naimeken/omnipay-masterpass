@@ -32,7 +32,7 @@ class Gateway extends AbstractGateway
      * This can be used by carts to get the display name for each gateway.
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return 'Masterpass';
     }

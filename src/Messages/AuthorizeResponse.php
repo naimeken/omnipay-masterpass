@@ -5,6 +5,9 @@
 
 namespace Omnipay\Masterpass\Messages;
 
+use Exception;
+use RuntimeException;
+
 class AuthorizeResponse extends AbstractResponse
 {
     /**
@@ -22,7 +25,7 @@ class AuthorizeResponse extends AbstractResponse
             . 'FF06' . $this->specPadLen($this->getUserId()) . $this->specToBHex($this->getUserId())
             . 'FF07' . '01' . '00';
 
-        if (strlen($data) % 32 != 0) {
+        if (strlen($data) % 32 !== 0) {
             $data .= '8';
             $padC = ceil(strlen($data) / 32) * 32;
             $data = str_pad($data, $padC, '0', STR_PAD_RIGHT);
@@ -55,9 +58,9 @@ class AuthorizeResponse extends AbstractResponse
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getEncKey(): string
+    public function getEncKey(): ?string
     {
         if (!empty($this->data['encryption_key'])) {
             return $this->data['encryption_key'];
@@ -67,9 +70,9 @@ class AuthorizeResponse extends AbstractResponse
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getMacKey(): string
+    public function getMacKey(): ?string
     {
         if (!empty($this->data['mac_key'])) {
             return $this->data['mac_key'];
@@ -79,9 +82,9 @@ class AuthorizeResponse extends AbstractResponse
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getPhone(): string
+    public function getPhone(): ?string
     {
         if (!empty($this->data['phone'])) {
             return $this->data['phone'];
@@ -96,13 +99,13 @@ class AuthorizeResponse extends AbstractResponse
      */
     private function getTimeZone(): string
     {
-        $p = date("P");
+        $p = date('P');
         $x = explode(':', $p);
         $dif = $x[0];
         $f = substr($dif, 0, 1);
         $s = substr($dif, 1);
 
-        if ($f == '-') {
+        if ($f === '-') {
             $rTime = '8';
         } else {
             $rTime = '0';
@@ -141,15 +144,13 @@ class AuthorizeResponse extends AbstractResponse
     {
         $phone = preg_replace('/[^0-9]/', '', $this->getPhone());
 
-        if (substr($phone, 0, 2) == '00') {
+        if (strpos($phone, '00') === 0) {
             $phone = substr($phone, 2);
-        } else {
-            if (substr($phone, 0, 1) == '0') {
-                $phone = substr($phone, 1);
-            }
+        } elseif (strpos($phone, '0') === 0) {
+            $phone = substr($phone, 1);
         }
 
-        if (strlen($phone) == 10) {
+        if (strlen($phone) === 10) {
             return '90' . $phone;
         }
 
@@ -162,14 +163,19 @@ class AuthorizeResponse extends AbstractResponse
      */
     private function prepareToken(string $data): string
     {
-        $iv = '00000000000000000000000000000000';
-        $iv = pack('H*', $iv);
+        // $iv = '00000000000000000000000000000000';
+        // $iv = pack('H*', $iv);
+        try {
+            $iv = random_bytes(32);
+        } catch (Exception $exception) {
+            throw new RuntimeException($exception);
+        }
         $encKey = $this->getEncKey();
         $encKey = pack('H*', $encKey);
         $packData = pack('H*', $data);
         $encryptData = openssl_encrypt($packData, 'aes-128-cbc', $encKey, OPENSSL_RAW_DATA, $iv);
         $encryptData2 = strtoupper($encryptData);
-        $macKey = hash_hmac("SHA1", $encryptData2, $this->getMacKey());
+        $macKey = hash_hmac('SHA1', $encryptData2, $this->getMacKey());
 
         return $encryptData2 . strtoupper($macKey);
     }
