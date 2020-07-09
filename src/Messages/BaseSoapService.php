@@ -2,7 +2,7 @@
 
 namespace Omnipay\Masterpass\Messages;
 
-use Exception;
+use Omnipay\Common\Exception\RuntimeException;
 use SoapClient;
 use SoapFault;
 
@@ -13,18 +13,19 @@ trait BaseSoapService
      * @param string $function
      * @param array $data
      * @return mixed
-     * @throws Exception
+     * @throws RuntimeException
      */
     public function makeRequestToService(string $endpoint, string $function, array $data = [])
     {
         try {
             $client = new SoapClient($endpoint, $this->getClientOptions());
-
-            $response = $client->$function($data);
+            return $client->$function($data);
         } catch (SoapFault $exception) {
-            $response = $exception->detail;
+            if (!isset($exception->detail)) {
+                throw new RuntimeException($exception->getMessage());
+            }
+            return $exception->detail;
         }
-        return $response;
     }
 
     /**

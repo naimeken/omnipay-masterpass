@@ -101,8 +101,8 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
         try {
             $response = $this->makeRequestToService($this->getEndpoint(), $this->getFunction(), $data);
             $method = $this->getFunction() . 'Response';
-
-            return property_exists($response, $method) ? (array)$response->$method : (array)$response;
+            $stdClass = property_exists($response, $method) ? (array)$response->$method : (array)$response;
+            return json_decode(json_encode($stdClass, JSON_THROW_ON_ERROR), true, 512, JSON_THROW_ON_ERROR);
         } catch (Exception $e) {
             throw new InvalidResponseException($e->getMessage());
         }

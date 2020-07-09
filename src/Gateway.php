@@ -55,6 +55,25 @@ class Gateway extends AbstractGateway
     }
 
     /**
+     * @param string $value
+     * @return Gateway
+     */
+    public function setEncKey(string $value): Gateway
+    {
+        return $this->setParameter('encKey', $value);
+    }
+
+    /**
+     * @param string $value
+     * @return Gateway
+     */
+    public function setMacKey(string $value): Gateway
+    {
+        return $this->setParameter('macKey', $value);
+    }
+
+
+    /**
      * @param array $parameters
      * @return RequestInterface
      */

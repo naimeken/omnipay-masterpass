@@ -72,7 +72,7 @@ class AuthorizeRequest extends AbstractRequest
 
             $response = array_merge($response, $tokenNeedingInfos);
 
-            return new AuthorizeResponse($this, array_unique($response));
+            return new AuthorizeResponse($this, $response);
         } catch (Exception $e) {
             throw new InvalidResponseException(
                 'Error communicating with payment gateway: ' . $e->getMessage(),
@@ -93,7 +93,7 @@ class AuthorizeRequest extends AbstractRequest
     /**
      * @return string
      */
-    public function getEncKey(): string
+    public function getEncKey(): ?string
     {
         return $this->getParameter('encKey');
     }
@@ -110,7 +110,7 @@ class AuthorizeRequest extends AbstractRequest
     /**
      * @return string
      */
-    public function getMacKey(): string
+    public function getMacKey(): ?string
     {
         return $this->getParameter('macKey');
     }

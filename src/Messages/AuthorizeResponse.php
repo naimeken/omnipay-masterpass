@@ -30,7 +30,18 @@ class AuthorizeResponse extends AbstractResponse
             $padC = ceil(strlen($data) / 32) * 32;
             $data = str_pad($data, $padC, '0', STR_PAD_RIGHT);
         }
+
         return $this->prepareToken($data);
+    }
+
+    public function getData()
+    {
+        return ['masterPassToken' => $this->getToken()];
+    }
+
+    public function getTransactionReference()
+    {
+        return $this->data['reference_number'] ?? null;
     }
 
     /**
@@ -38,11 +49,7 @@ class AuthorizeResponse extends AbstractResponse
      */
     public function getClientId(): ?string
     {
-        if (!empty($this->data['client_id'])) {
-            return $this->data['client_id'];
-        }
-
-        return null;
+        return $this->data['client_id'] ?? null;
     }
 
     /**
@@ -50,11 +57,7 @@ class AuthorizeResponse extends AbstractResponse
      */
     public function getUserId(): ?string
     {
-        if (!empty($this->data['user_id'])) {
-            return $this->data['user_id'];
-        }
-
-        return null;
+        return $this->data['user_id'] ?? null;
     }
 
     /**
@@ -62,11 +65,7 @@ class AuthorizeResponse extends AbstractResponse
      */
     public function getEncKey(): ?string
     {
-        if (!empty($this->data['encryption_key'])) {
-            return $this->data['encryption_key'];
-        }
-
-        return null;
+        return $this->data['encryption_key'] ?? null;
     }
 
     /**
@@ -74,11 +73,7 @@ class AuthorizeResponse extends AbstractResponse
      */
     public function getMacKey(): ?string
     {
-        if (!empty($this->data['mac_key'])) {
-            return $this->data['mac_key'];
-        }
-
-        return null;
+        return $this->data['mac_key'] ?? null;
     }
 
     /**
@@ -86,11 +81,7 @@ class AuthorizeResponse extends AbstractResponse
      */
     public function getPhone(): ?string
     {
-        if (!empty($this->data['phone'])) {
-            return $this->data['phone'];
-        }
-
-        return null;
+        return $this->data['phone'] ?? null;
     }
 
 
@@ -102,7 +93,7 @@ class AuthorizeResponse extends AbstractResponse
         $p = date('P');
         $x = explode(':', $p);
         $dif = $x[0];
-        $f = substr($dif, 0, 1);
+        $f = $dif[0];
         $s = substr($dif, 1);
 
         if ($f === '-') {
@@ -166,7 +157,7 @@ class AuthorizeResponse extends AbstractResponse
         // $iv = '00000000000000000000000000000000';
         // $iv = pack('H*', $iv);
         try {
-            $iv = random_bytes(32);
+            $iv = random_bytes(16);
         } catch (Exception $exception) {
             throw new RuntimeException($exception);
         }
