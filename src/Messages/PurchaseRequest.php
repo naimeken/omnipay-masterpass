@@ -14,6 +14,8 @@ use RuntimeException;
 class PurchaseRequest extends AbstractRequest
 {
     public const ENDPOINT = self::BASE . 'MPGCommitPurchaseService.asmx?wsdl';
+    private const SECURE_3D = 'SECURE_3D';
+
     /**
      * @return array|mixed
      * @throws Exception
@@ -21,7 +23,7 @@ class PurchaseRequest extends AbstractRequest
     public function getData()
     {
         try {
-            if ($this->getPaymentType() === '3d') {
+            if ($this->getPaymentType() === self::SECURE_3D) {
                 $this->checkMdStatus($this->getBankIca(), $this->getMdStatus());
                 $this->hashControl($this->getBankIca());
             }
@@ -41,7 +43,6 @@ class PurchaseRequest extends AbstractRequest
                 'MoneyCard' => null,
                 'amount' => $this->getAmount(),
                 'order_no' => $this->getTransactionReference(),
-                'macro_merchant_id' => $this->getMacroMerchantId(),
                 'payment_type' => $this->getPaymentType(),
                 'installment_count' => null,
                 'bank_ica' => $this->getBankIca(),
@@ -57,6 +58,10 @@ class PurchaseRequest extends AbstractRequest
                 'custom_fields' => null,
                 'campaign_id' => null
             ];
+
+            if ($this->getMacroMerchantId()) {
+                $bodyParams['macro_merchant_id'] = $this->getMacroMerchantId();
+            }
 
             return [
                 'CommitPurchaseRequest' => [
@@ -114,9 +119,9 @@ class PurchaseRequest extends AbstractRequest
     }
 
     /**
-     * @return string
+     * @return mixed
      */
-    public function getMacroMerchantId(): string
+    public function getMacroMerchantId()
     {
         return $this->getParameter('macro_merchant_id');
     }

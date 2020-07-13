@@ -24,7 +24,6 @@ class GatewayTest extends GatewayTestCase
         $this->gateway->setClientId('xxxx');
         $this->gateway->setEncKey('xxxx');
         $this->gateway->setMacKey('xxxx');
-        $this->gateway->setMacroMerchantId('xxxx');
     }
 
 
