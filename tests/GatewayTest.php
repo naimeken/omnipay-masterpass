@@ -1,6 +1,6 @@
 <?php
 /**
- * Masterpass unut test
+ * Masterpass unit test
  */
 
 namespace Omnipay\Tests;
@@ -22,6 +22,9 @@ class GatewayTest extends GatewayTestCase
         /** @var Gateway gateway */
         $this->gateway = new Gateway(null, $this->getHttpRequest());
         $this->gateway->setClientId('xxxx');
+        $this->gateway->setEncKey('xxxx');
+        $this->gateway->setMacKey('xxxx');
+        $this->gateway->setMacroMerchantId('xxxx');
     }
 
 

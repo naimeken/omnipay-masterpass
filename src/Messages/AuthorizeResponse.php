@@ -165,7 +165,7 @@ class AuthorizeResponse extends AbstractResponse
         $encKey = pack('H*', $encKey);
         $packData = pack('H*', $data);
         $encryptData = openssl_encrypt($packData, 'aes-128-cbc', $encKey, OPENSSL_RAW_DATA, $iv);
-        $encryptData2 = strtoupper($encryptData);
+        $encryptData2 = strtoupper(bin2hex($encryptData));
         $macKey = hash_hmac('SHA1', $encryptData2, $this->getMacKey());
 
         return $encryptData2 . strtoupper($macKey);
