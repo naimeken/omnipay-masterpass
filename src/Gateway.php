@@ -73,16 +73,6 @@ class Gateway extends AbstractGateway
     }
 
     /**
-     * @param string $value
-     * @return Gateway
-     */
-    public function setMacroMerchantId(string $value): Gateway
-    {
-        return $this->setParameter('macroMerchantId', $value);
-    }
-
-
-    /**
      * @param array $parameters
      * @return RequestInterface
      */
