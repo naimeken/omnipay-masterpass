@@ -196,20 +196,20 @@ class PurchaseRequest extends AbstractRequest
     }
 
     /**
-     * @param array $value
+     * @param string $value
      * @return PurchaseRequest
      */
-    public function setHashProcess(array $value): PurchaseRequest
+    public function setHashParams(string $value): PurchaseRequest
     {
-        return $this->setParameter('hashProcess', $value);
+        return $this->setParameter('hashParams', $value);
     }
 
     /**
-     * @return array
+     * @return string
      */
-    public function getHashProcess(): array
+    public function getHashParams(): string
     {
-        return $this->getParameter('hashProcess');
+        return $this->getParameter('hashParams');
     }
 
     /**
@@ -219,6 +219,142 @@ class PurchaseRequest extends AbstractRequest
     public function setInstallmentCount(string $value): PurchaseRequest
     {
         return $this->setParameter('installmentCount', $value);
+    }
+
+    /**
+     * @return string
+     */
+    public function getOid(): string
+    {
+        return $this->getParameter('oid');
+    }
+
+    /**
+     * @param string $value
+     * @return PurchaseRequest
+     */
+    public function setOid(string $value): PurchaseRequest
+    {
+        return $this->setParameter('oid', $value);
+    }
+
+    /**
+     * @return string
+     */
+    public function getAuthCode(): string
+    {
+        return $this->getParameter('authCode');
+    }
+
+    /**
+     * @param string $value
+     * @return PurchaseRequest
+     */
+    public function setAuthCode(string $value): PurchaseRequest
+    {
+        return $this->setParameter('authCode', $value);
+    }
+
+    /**
+     * @return string
+     */
+    public function getProcReturnCode(): string
+    {
+        return $this->getParameter('procReturnCode');
+    }
+
+    /**
+     * @param string $value
+     * @return PurchaseRequest
+     */
+    public function setProcReturnCode(string $value): PurchaseRequest
+    {
+        return $this->setParameter('procReturnCode', $value);
+    }
+
+    /**
+     * @return string
+     */
+    public function getCavv(): string
+    {
+        return $this->getParameter('cavv');
+    }
+
+    /**
+     * @param string $value
+     * @return PurchaseRequest
+     */
+    public function setCavv(string $value): PurchaseRequest
+    {
+        return $this->setParameter('cavv', $value);
+    }
+
+    /**
+     * @return string
+     */
+    public function getEci(): string
+    {
+        return $this->getParameter('eci');
+    }
+
+    /**
+     * @param string $value
+     * @return PurchaseRequest
+     */
+    public function setEci(string $value): PurchaseRequest
+    {
+        return $this->setParameter('eci', $value);
+    }
+
+    /**
+     * @return string
+     */
+    public function getMd(): string
+    {
+        return $this->getParameter('md');
+    }
+
+    /**
+     * @param string $value
+     * @return PurchaseRequest
+     */
+    public function setMd(string $value): PurchaseRequest
+    {
+        return $this->setParameter('md', $value);
+    }
+
+    /**
+     * @return string
+     */
+    public function getRnd(): string
+    {
+        return $this->getParameter('rnd');
+    }
+
+    /**
+     * @param string $value
+     * @return PurchaseRequest
+     */
+    public function setRnd(string $value): PurchaseRequest
+    {
+        return $this->setParameter('rnd', $value);
+    }
+
+    /**
+     * @return string
+     */
+    public function getHash(): string
+    {
+        return $this->getParameter('hash');
+    }
+
+    /**
+     * @param string $value
+     * @return PurchaseRequest
+     */
+    public function setHash(string $value): PurchaseRequest
+    {
+        return $this->setParameter('hash', $value);
     }
 
     /**
@@ -266,21 +402,21 @@ class PurchaseRequest extends AbstractRequest
      */
     private function hashControl(): bool
     {
-        if (empty($this->getHashProcess()['hashParams'])) {
+        if (!$this->getHashParams()) {
             throw new RuntimeException ('Hash params error');
         }
 
         if (in_array($this->getBankIca(), $this->getBankIcaList(), true)) {
             $calculatedHashParams = '';
-            $params = explode(':', $this->getHashProcess()['hashParams']);
+            $params = explode(':', $this->getHashParams());
             foreach ($params as $param) {
-                $calculatedHashParams .= $this->getHashProcess()[$param] ?? '';
+                $calculatedHashParams .= $this->getHashParameters()[$param] ?? '';
             }
 
             $calculatedHashParams .= $this->getMerchantStoreKey();
             $hashCalculated = base64_encode(sha1($calculatedHashParams, true));
 
-            if ($hashCalculated !== $this->getHashProcess()['hash']) {
+            if ($hashCalculated !== $this->getHash()) {
                 throw new RuntimeException ('Not equal calculated hash and hash');
             }
 
@@ -296,5 +432,22 @@ class PurchaseRequest extends AbstractRequest
     private function getBankIcaList(): array
     {
         return ['2030', '2110', '3771', '1684', '9165', '3039', '7656'];
+    }
+
+    /**
+     * @return array
+     */
+    private function getHashParameters(): array
+    {
+        return [
+            'clientid' => $this->getClientId(),
+            'oid' => $this->getOid(),
+            'authCode' => $this->getAuthCode(),
+            'procReturnCode' => $this->getProcReturnCode(),
+            'cavv' => $this->getCavv(),
+            'eci' => $this->getEci(),
+            'md' => $this->getMd(),
+            'rnd' => $this->getRnd()
+        ];
     }
 }
