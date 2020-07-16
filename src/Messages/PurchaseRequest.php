@@ -24,8 +24,8 @@ class PurchaseRequest extends AbstractRequest
     {
         try {
             if ($this->getPaymentType() === self::SECURE_3D) {
-                $this->checkMdStatus($this->getBankIca(), $this->getMdStatus());
-                $this->hashControl($this->getBankIca());
+                $this->checkMdStatus();
+                $this->hashControl();
             }
 
             $headerParams = [
@@ -44,7 +44,8 @@ class PurchaseRequest extends AbstractRequest
                 'amount' => $this->getAmount(),
                 'order_no' => $this->getTransactionReference(),
                 'payment_type' => $this->getPaymentType(),
-                'installment_count' => null,
+                'installment_count' => $this->getInstallmentCount(),
+                'macro_merchant_id' => $this->getMacroMerchantId(),
                 'bank_ica' => $this->getBankIca(),
                 'token' => $this->getToken(),
                 'msisdn' => $this->getPhone(),
@@ -115,7 +116,7 @@ class PurchaseRequest extends AbstractRequest
      */
     public function setMacroMerchantId(string $value): PurchaseRequest
     {
-        return $this->setParameter('macro_merchant_id', $value);
+        return $this->setParameter('macroMerchantId', $value);
     }
 
     /**
@@ -123,7 +124,7 @@ class PurchaseRequest extends AbstractRequest
      */
     public function getMacroMerchantId()
     {
-        return $this->getParameter('macro_merchant_id');
+        return $this->getParameter('macroMerchantId');
     }
 
     /**
@@ -132,7 +133,7 @@ class PurchaseRequest extends AbstractRequest
      */
     public function setBankIca(string $value): PurchaseRequest
     {
-        return $this->setParameter('bank_ica', $value);
+        return $this->setParameter('bankIca', $value);
     }
 
     /**
@@ -140,7 +141,7 @@ class PurchaseRequest extends AbstractRequest
      */
     public function getBankIca(): string
     {
-        return $this->getParameter('bank_ica');
+        return $this->getParameter('bankIca');
     }
 
     /**
@@ -149,7 +150,7 @@ class PurchaseRequest extends AbstractRequest
      */
     public function setPaymentType(string $value): PurchaseRequest
     {
-        return $this->setParameter('payment_type', $value);
+        return $this->setParameter('paymentType', $value);
     }
 
     /**
@@ -157,7 +158,7 @@ class PurchaseRequest extends AbstractRequest
      */
     public function getPaymentType(): string
     {
-        return $this->getPaymentTypes()[$this->getParameter('payment_type')];
+        return $this->getPaymentTypes()[$this->getParameter('paymentType')];
     }
 
     /**
@@ -166,7 +167,7 @@ class PurchaseRequest extends AbstractRequest
      */
     public function setMdStatus(string $value): PurchaseRequest
     {
-        return $this->setParameter('md_status', $value);
+        return $this->setParameter('mdStatus', $value);
     }
 
     /**
@@ -174,7 +175,7 @@ class PurchaseRequest extends AbstractRequest
      */
     public function getMdStatus(): string
     {
-        return $this->getParameter('md_status');
+        return $this->getParameter('mdStatus');
     }
 
     /**
@@ -198,17 +199,34 @@ class PurchaseRequest extends AbstractRequest
      * @param array $value
      * @return PurchaseRequest
      */
-    public function setHashResponse(array $value): PurchaseRequest
+    public function setHashProcess(array $value): PurchaseRequest
     {
-        return $this->setParameter('hashResponse', $value);
+        return $this->setParameter('hashProcess', $value);
     }
 
     /**
      * @return array
      */
-    public function getHashResponse(): array
+    public function getHashProcess(): array
     {
-        return $this->getParameter('hashResponse');
+        return $this->getParameter('hashProcess');
+    }
+
+    /**
+     * @param string $value
+     * @return PurchaseRequest
+     */
+    public function setInstallmentCount(string $value): PurchaseRequest
+    {
+        return $this->setParameter('installmentCount', $value);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getInstallmentCount()
+    {
+        return $this->getParameter('installmentCount');
     }
 
     /**
@@ -223,20 +241,19 @@ class PurchaseRequest extends AbstractRequest
     }
 
     /**
-     * @param string $bankIca
-     * @param string $mdStatus
      * @return bool
      * @throws Exception
      */
-    private function checkMdStatus(string $bankIca, string $mdStatus): bool
+    private function checkMdStatus(): bool
     {
-        if (empty($bankIca)) {
+        if (empty($this->getBankIca())) {
             throw new RuntimeException('Not found bank value');
         }
 
         $successStatusCodes = [1, 2, 3, 4];
 
-        if (!(isset($successStatusCodes[$mdStatus])) && !in_array($bankIca, $this->getBankIcaList(), true)) {
+        if (!(isset($successStatusCodes[$this->getMdStatus()])) && !in_array($this->getBankIca(),
+                $this->getBankIcaList(), true)) {
             throw new RuntimeException('3DSecure verification error');
         }
 
@@ -244,26 +261,26 @@ class PurchaseRequest extends AbstractRequest
     }
 
     /**
-     * @param string $bankIca
      * @return bool
      * @throws Exception
      */
-    private function hashControl(string $bankIca): bool
+    private function hashControl(): bool
     {
-        if (empty($this->getHashResponse()['hashParams'])) {
+        if (empty($this->getHashProcess()['hashParams'])) {
             throw new RuntimeException ('Hash params error');
         }
 
-        if (in_array($bankIca, $this->getBankIcaList(), true)) {
+        if (in_array($this->getBankIca(), $this->getBankIcaList(), true)) {
             $calculatedHashParams = '';
-            $params = explode(':', $this->getHashResponse()['hashParams']);
+            $params = explode(':', $this->getHashProcess()['hashParams']);
             foreach ($params as $param) {
-                $calculatedHashParams .= $this->getHashResponse()[$param] ?? '';
+                $calculatedHashParams .= $this->getHashProcess()[$param] ?? '';
             }
 
             $calculatedHashParams .= $this->getMerchantStoreKey();
             $hashCalculated = base64_encode(sha1($calculatedHashParams, true));
-            if ($hashCalculated !== $this->getHashResponse()['hash']) {
+
+            if ($hashCalculated !== $this->getHashProcess()['hash']) {
                 throw new RuntimeException ('Not equal calculated hash and hash');
             }
 
