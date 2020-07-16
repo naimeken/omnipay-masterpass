@@ -26,7 +26,6 @@ class GatewayTest extends GatewayTestCase
         $this->gateway->setMacKey('xxxx');
     }
 
-
     public function testAuthorize()
     {
         $this->options = [
@@ -40,7 +39,7 @@ class GatewayTest extends GatewayTestCase
             'phone' => 'xxxx'
         ];
 
-        /** @var AuthorizeResponse $response */
+
         $response = $this->gateway->authorize($this->options)->send();
         $this->assertTrue($response->isSuccessful());
     }
@@ -54,24 +53,26 @@ class GatewayTest extends GatewayTestCase
             'clientIp' => 'xxxx',
             'mode' => 'test',
             'macro_merchant_id' => 'xxxxx',
-            'bank_ica' => 'xxxx',
-            'payment_type' => '3d',
+            'bankIca' => '2030',
+            'paymentType' => '3d',
             'amount' => '4599',
             'mdStatus' => '1',
             'token' => 'xxxx',
             'phone' => 'xxxx',
             'merchantStoreKey' => "xxxx",
-            'hashResponse' => [
-                'clientid' => $this->gateway->getClientId(),
+            'installmentCount' => 1,
+            'hashProcess' => [
+                'clientId' => $this->gateway->getClientId(),
                 'oid' => '',
-                'authcode' => '',
-                'procreturncode' => '',
+                'authCode' => '',
+                'procReturnCode' => '',
                 'response' => '',
-                'mdstatus' => '',
                 'cavv' => '',
                 'eci' => '',
                 'md' => '',
-                'rnd' => ''
+                'rnd' => '',
+                'hash' => 'StWDryLC59QMHJFrKSApkVWkZGQ=',
+                'hashParams' => 'clientid:oid:mdStatus:cavv:eci:md:rnd:'
             ]
         ];
 
