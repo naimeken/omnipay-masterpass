@@ -36,7 +36,7 @@ class AuthorizeResponse extends AbstractResponse
 
     public function getData()
     {
-        return ['masterPassToken' => $this->getToken()];
+        return ['masterPassToken' => $this->isSuccessful() ? $this->getToken() : ''];
     }
 
     public function getTransactionReference()
