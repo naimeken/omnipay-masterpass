@@ -190,7 +190,7 @@ class PurchaseRequest extends AbstractRequest
     /**
      * @return string
      */
-    public function getMerchantStoreKey(): string
+    public function getMerchantStoreKey(): ?string
     {
         return $this->getParameter('merchantStoreKey');
     }
@@ -241,7 +241,7 @@ class PurchaseRequest extends AbstractRequest
     /**
      * @return string
      */
-    public function getAuthCode(): string
+    public function getAuthCode(): ?string
     {
         return $this->getParameter('authCode');
     }
@@ -258,7 +258,7 @@ class PurchaseRequest extends AbstractRequest
     /**
      * @return string
      */
-    public function getProcReturnCode(): string
+    public function getProcReturnCode(): ?string
     {
         return $this->getParameter('procReturnCode');
     }
@@ -275,7 +275,7 @@ class PurchaseRequest extends AbstractRequest
     /**
      * @return string
      */
-    public function getCavv(): string
+    public function getCavv(): ?string
     {
         return $this->getParameter('cavv');
     }
@@ -292,7 +292,7 @@ class PurchaseRequest extends AbstractRequest
     /**
      * @return string
      */
-    public function getEci(): string
+    public function getEci(): ?string
     {
         return $this->getParameter('eci');
     }
