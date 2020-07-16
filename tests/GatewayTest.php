@@ -61,24 +61,20 @@ class GatewayTest extends GatewayTestCase
             'phone' => 'xxxx',
             'merchantStoreKey' => "xxxx",
             'installmentCount' => 1,
-            'hashProcess' => [
-                'clientId' => $this->gateway->getClientId(),
-                'oid' => '',
-                'authCode' => '',
-                'procReturnCode' => '',
-                'response' => '',
-                'cavv' => '',
-                'eci' => '',
-                'md' => '',
-                'rnd' => '',
-                'hash' => 'StWDryLC59QMHJFrKSApkVWkZGQ=',
-                'hashParams' => 'clientid:oid:mdStatus:cavv:eci:md:rnd:'
-            ]
+            'clientId' => $this->gateway->getClientId(),
+            'oid' => '',
+            'authCode' => '',
+            'procReturnCode' => '',
+            'cavv' => '',
+            'eci' => '',
+            'md' => '',
+            'rnd' => '',
+            'hash' => 'vPIt/G+3a3NmsfFnW68jMqDmp84=',
+            'hashParams' => 'clientid:oid:mdStatus:cavv:eci:md:rnd:'
         ];
 
         /** @var PurchaseResponse $response */
         $response = $this->gateway->purchase($this->options)->send();
-
         $this->assertTrue($response->isSuccessful());
     }
 }
