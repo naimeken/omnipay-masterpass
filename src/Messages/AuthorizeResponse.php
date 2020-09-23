@@ -154,9 +154,10 @@ class AuthorizeResponse extends AbstractResponse
      */
     private function prepareToken(string $data): string
     {
+        // $iv = '00000000000000000000000000000000';
+        // $iv = pack('H*', $iv);
         try {
-            $iv = '00000000000000000000000000000000';
-            $iv = pack('H*', $iv);
+            $iv = random_bytes(16);
         } catch (Exception $exception) {
             throw new RuntimeException($exception);
         }
