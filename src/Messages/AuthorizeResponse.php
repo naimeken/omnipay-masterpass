@@ -23,7 +23,8 @@ class AuthorizeResponse extends AbstractResponse
             . 'FF04' . $this->specPadLen($phone) . $this->specToBHex($phone)
             . 'FF05' . $this->specPadLen($this->getTransactionReference()) . $this->specToBHex($this->getTransactionReference())
             . 'FF06' . $this->specPadLen($this->getUserId()) . $this->specToBHex($this->getUserId())
-            . 'FF07' . '01' . '00';
+            . 'FF07' . '01' . '00'
+            . 'FF08' . '01' . '00';
 
         if (strlen($data) % 32 !== 0) {
             $data .= '8';
