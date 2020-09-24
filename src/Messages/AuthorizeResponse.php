@@ -155,18 +155,17 @@ class AuthorizeResponse extends AbstractResponse
      */
     private function prepareToken(string $data): string
     {
-        // $iv = '00000000000000000000000000000000';
-        // $iv = pack('H*', $iv);
         try {
             $iv = '00000000000000000000000000000000';
             $iv = pack('H*', $iv);
+            $options = OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING;
         } catch (Exception $exception) {
             throw new RuntimeException($exception);
         }
         $encKey = $this->getEncKey();
         $encKey = pack('H*', $encKey);
         $packData = pack('H*', $data);
-        $encryptData = openssl_encrypt($packData, 'aes-128-cbc', $encKey, OPENSSL_RAW_DATA, $iv);
+        $encryptData = openssl_encrypt($packData, 'aes-128-cbc', $encKey, $options, $iv);
         $encryptData2 = strtoupper(bin2hex($encryptData));
         $macKey = hash_hmac('SHA1', $encryptData2, $this->getMacKey());
 
