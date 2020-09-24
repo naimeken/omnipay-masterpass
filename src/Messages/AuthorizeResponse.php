@@ -23,7 +23,7 @@ class AuthorizeResponse extends AbstractResponse
             . 'FF04' . $this->specPadLen($phone) . $this->specToBHex($phone)
             . 'FF05' . $this->specPadLen($this->getTransactionReference()) . $this->specToBHex($this->getTransactionReference())
             . 'FF06' . $this->specPadLen($this->getUserId()) . $this->specToBHex($this->getUserId())
-            . 'FF07' . '01' . $this->getValidatedPhone()
+            . 'FF07' . '01' . $this->getValidatedMsisdn()
             . 'FF08' . '01' . $this->getValidationType()
             . 'FF09' . '01' . $this->getMerchantType();
 
@@ -99,7 +99,7 @@ class AuthorizeResponse extends AbstractResponse
      */
     public function getValidationType(): string
     {
-        return $this->data['validationType'];
+        return $this->data['validationType'] ?? '00';
     }
 
     /**
@@ -107,15 +107,15 @@ class AuthorizeResponse extends AbstractResponse
      */
     public function getMerchantType(): string
     {
-        return $this->data['merchantType'];
+        return $this->data['merchantType'] ?? '00';
     }
 
     /**
      * @return string
      */
-    public function getValidatedPhone(): string
+    public function getValidatedMsisdn(): string
     {
-        return $this->data['validatedPhone'];
+        return $this->data['validatedMsisdn'] ?? '00';
     }
 
     /**

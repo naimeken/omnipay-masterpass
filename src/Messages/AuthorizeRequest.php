@@ -58,7 +58,7 @@ class AuthorizeRequest extends AbstractRequest
     public function sendData($data): ResponseInterface
     {
         try {
-            $tokenNeedingInfos = [
+            $tokenNeedingInfo = [
                 'user_id' => $this->getUserId(),
                 'reference_number' => $this->getTransactionReference(),
                 'client_id' => $this->getClientId(),
@@ -66,7 +66,7 @@ class AuthorizeRequest extends AbstractRequest
                 'timezone' => $this->getTimezone(),
                 'validationType' => $this->getValidationType(),
                 'merchantType' => $this->getMerchantType(),
-                'validatedPhone' => $this->getValidatedPhone(),
+                'validatedMsisdn' => $this->getValidatedMsisdn(),
             ];
 
             $response = ($this->getEncKey() && $this->getMacKey()) ? [
@@ -74,7 +74,7 @@ class AuthorizeRequest extends AbstractRequest
                 'encryption_key' => $this->getEncKey(),
             ] : $this->getResult($data);
 
-            $response = array_merge($response, $tokenNeedingInfos);
+            $response = array_merge($response, $tokenNeedingInfo);
 
             return new AuthorizeResponse($this, $response);
         } catch (Exception $e) {
@@ -191,17 +191,17 @@ class AuthorizeRequest extends AbstractRequest
      * @param string $value
      * @return AuthorizeRequest
      */
-    public function setValidatedPhone(string $value): AuthorizeRequest
+    public function setValidatedMsisdn(string $value): AuthorizeRequest
     {
-        return $this->setParameter('validatedPhone', $value);
+        return $this->setParameter('validatedMsisdn', $value);
     }
 
     /**
      * @return string
      */
-    public function getValidatedPhone(): ?string
+    public function getValidatedMsisdn(): ?string
     {
-        return $this->getParameter('validatedPhone') ?? '00';
+        return $this->getParameter('validatedMsisdn') ?? '00';
     }
 
     /**
