@@ -62,7 +62,11 @@ class AuthorizeRequest extends AbstractRequest
                 'user_id' => $this->getUserId(),
                 'reference_number' => $this->getTransactionReference(),
                 'client_id' => $this->getClientId(),
-                'phone' => $this->getPhone()
+                'phone' => $this->getPhone(),
+                'timezone' => $this->getTimezone(),
+                'validationType' => $this->getValidationType(),
+                'merchantType' => $this->getMerchantType(),
+                'validatedPhone' => $this->getValidatedPhone(),
             ];
 
             $response = ($this->getEncKey() && $this->getMacKey()) ? [
@@ -130,6 +134,96 @@ class AuthorizeRequest extends AbstractRequest
     public function getUserId(): string
     {
         return $this->getParameter('userId');
+    }
+
+    /**
+     * @param string $value
+     * @return AuthorizeRequest
+     */
+    public function setTimezone(string $value): AuthorizeRequest
+    {
+        return $this->setParameter('timezone', $value);
+    }
+
+    /**
+     * @return string
+     */
+    public function getTimezone(): ?string
+    {
+        return $this->getParameter('timezone') ?? $this->calculateTimeZone();
+    }
+
+    /**
+     * @param string $value
+     * @return AuthorizeRequest
+     */
+    public function setMerchantType(string $value): AuthorizeRequest
+    {
+        return $this->setParameter('merchantType', $value);
+    }
+
+    /**
+     * @return string
+     */
+    public function getMerchantType(): ?string
+    {
+        return $this->getParameter('merchantType') ?? '00';
+    }
+
+    /**
+     * @param string $value
+     * @return AuthorizeRequest
+     */
+    public function setValidationType(string $value): AuthorizeRequest
+    {
+        return $this->setParameter('validationType', $value);
+    }
+
+    /**
+     * @return string
+     */
+    public function getValidationType(): ?string
+    {
+        return $this->getParameter('validationType') ?? '00';
+    }
+
+    /**
+     * @param string $value
+     * @return AuthorizeRequest
+     */
+    public function setValidatedPhone(string $value): AuthorizeRequest
+    {
+        return $this->setParameter('validatedPhone', $value);
+    }
+
+    /**
+     * @return string
+     */
+    public function getValidatedPhone(): ?string
+    {
+        return $this->getParameter('validatedPhone') ?? '00';
+    }
+
+    /**
+     * @return string
+     */
+    private function calculateTimeZone(): string
+    {
+        $p = date('P');
+        $x = explode(':', $p);
+        $dif = $x[0];
+        $f = $dif[0];
+        $s = substr($dif, 1);
+
+        if ($f === '-') {
+            $rTime = '8';
+        } else {
+            $rTime = '0';
+        }
+
+        $rTime .= dechex($s);
+
+        return $rTime;
     }
 }
 

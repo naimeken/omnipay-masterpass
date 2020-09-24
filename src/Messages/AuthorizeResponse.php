@@ -18,13 +18,14 @@ class AuthorizeResponse extends AbstractResponse
         $phone = $this->createValidPHone();
         $dateTime = date('YmdHis');
         $data = 'FF01' . $this->specPadLen($this->getClientId()) . $this->specToBHex($this->getClientId())
-            . 'FF02' . '01' . $this->getTimeZone()
+            . 'FF02' . '01' . $this->getTimezone()
             . 'FF03' . $this->specPadLen($dateTime) . $this->specToBHex($dateTime)
             . 'FF04' . $this->specPadLen($phone) . $this->specToBHex($phone)
             . 'FF05' . $this->specPadLen($this->getTransactionReference()) . $this->specToBHex($this->getTransactionReference())
             . 'FF06' . $this->specPadLen($this->getUserId()) . $this->specToBHex($this->getUserId())
-            . 'FF07' . '01' . '00'
-            . 'FF08' . '01' . '00';
+            . 'FF07' . '01' . $this->getValidatedPhone()
+            . 'FF08' . '01' . $this->getValidationType()
+            . 'FF09' . '01' . $this->getMerchantType();
 
         if (strlen($data) % 32 !== 0) {
             $data .= '8';
@@ -85,27 +86,36 @@ class AuthorizeResponse extends AbstractResponse
         return $this->data['phone'] ?? null;
     }
 
+    /**
+     * @return string
+     */
+    public function getTimezone(): string
+    {
+        return $this->data['timezone'];
+    }
 
     /**
      * @return string
      */
-    private function getTimeZone(): string
+    public function getValidationType(): string
     {
-        $p = date('P');
-        $x = explode(':', $p);
-        $dif = $x[0];
-        $f = $dif[0];
-        $s = substr($dif, 1);
+        return $this->data['validationType'];
+    }
 
-        if ($f === '-') {
-            $rTime = '8';
-        } else {
-            $rTime = '0';
-        }
+    /**
+     * @return string
+     */
+    public function getMerchantType(): string
+    {
+        return $this->data['merchantType'];
+    }
 
-        $rTime .= dechex($s);
-
-        return $rTime;
+    /**
+     * @return string
+     */
+    public function getValidatedPhone(): string
+    {
+        return $this->data['validatedPhone'];
     }
 
     /**
@@ -155,18 +165,17 @@ class AuthorizeResponse extends AbstractResponse
      */
     private function prepareToken(string $data): string
     {
-        // $iv = '00000000000000000000000000000000';
-        // $iv = pack('H*', $iv);
         try {
             $iv = '00000000000000000000000000000000';
             $iv = pack('H*', $iv);
+            $options = OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING;
         } catch (Exception $exception) {
             throw new RuntimeException($exception);
         }
         $encKey = $this->getEncKey();
         $encKey = pack('H*', $encKey);
         $packData = pack('H*', $data);
-        $encryptData = openssl_encrypt($packData, 'aes-128-cbc', $encKey, OPENSSL_RAW_DATA, $iv);
+        $encryptData = openssl_encrypt($packData, 'aes-128-cbc', $encKey, $options, $iv);
         $encryptData2 = strtoupper(bin2hex($encryptData));
         $macKey = hash_hmac('SHA1', $encryptData2, $this->getMacKey());
 

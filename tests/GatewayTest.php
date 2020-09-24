@@ -29,14 +29,18 @@ class GatewayTest extends GatewayTestCase
     public function testAuthorize()
     {
         $this->options = [
-            'transactionReference' => '12345',
+            'transactionReference' => '324324',
             'sendSms' => 'Y',
             'sendSmsLanguage' => 'tur',
-            'userId' => '1',
+            'userId' => 'abc123',
             'mode' => 'test',
             'macKey' => 'xxxx',
-            'encKey' => 'xxxx',
-            'phone' => 'xxxx'
+            'encKey' => 'xxx',
+            'phone' => '905555555555',
+            'timezone' => '03',
+            'merchantType' => '00',
+            'validationType' => '00',
+            'validatedPhone' => '01'
         ];
 
 
