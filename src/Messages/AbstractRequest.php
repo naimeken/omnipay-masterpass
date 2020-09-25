@@ -94,7 +94,6 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
     /**
      * @param array $data
      * @return array
-     * @throws InvalidResponseException
      */
     public function getResult(array $data): array
     {
@@ -104,7 +103,11 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
             $stdClass = property_exists($response, $method) ? (array)$response->$method : (array)$response;
             return json_decode(json_encode($stdClass, JSON_THROW_ON_ERROR), true, 512, JSON_THROW_ON_ERROR);
         } catch (Exception $e) {
-            throw new InvalidResponseException($e->getMessage());
+            return [
+                'Detail' => [
+                    'response_desc' => $e->getMessage()
+                ]
+            ];
         }
     }
 

@@ -26,6 +26,40 @@ class GatewayTest extends GatewayTestCase
         $this->gateway->setMacKey('xxxx');
     }
 
+    public function testPurchase()
+    {
+        $this->options = [
+            'transactionReference' => '47974',
+            'sendSms' => 'Y',
+            'sendSmsLanguage' => 'tur',
+            'clientIp' => 'xxxx',
+            'mode' => 'test',
+            'macro_merchant_id' => 'xxx',
+            'bankIca' => '2110',
+            'paymentType' => '3d',
+            'amount' => '28140',
+            'mdStatus' => '2',
+            'token' => '7D3ABE5ABB09D213FEC0CE44A19F1F66A93386C609D512C229BC1C7A9001F1E08FEAE07994C3F927CB1CC03AAD6FC7E854A5AB9952AF75E23D2FD6F53B6A7C5E0D4D62477BDC082AF40B800E8B5AFD40322586E0706D16A4A751D99777D34640',
+            'phone' => 'xxx',
+            'storeKey' => "xxx",
+            'clientId' => $this->gateway->getClientId(),
+            'oid' => '47974',
+            'authCode' => '',
+            'procReturnCode' => '',
+            'cavv' => '',
+            'eci' => '',
+            'md' => '520019:2A4BA901C286392A0A7AB93D5980502D19337C9C409962FE854EEF644720608C:3248:##100100000',
+            'rnd' => 'bpEeh/85DfvdZ58NWTDX',
+            'hash' => 'z3djbwPUdXXB0UXpw2Amb3Uuago=',
+            'hashParams' => 'clientid:oid:mdStatus:cavv:eci:md:rnd:'
+        ];
+
+        /** @var PurchaseResponse $response */
+        $response = $this->gateway->purchase($this->options)->send();
+        $this->assertTrue($response->isSuccessful());
+    }
+
+
     public function testAuthorize()
     {
         $this->options = [
@@ -45,40 +79,6 @@ class GatewayTest extends GatewayTestCase
 
 
         $response = $this->gateway->authorize($this->options)->send();
-        $this->assertTrue($response->isSuccessful());
-    }
-
-    public function testPurchase()
-    {
-        $this->options = [
-            'transactionReference' => '54564564',
-            'sendSms' => 'Y',
-            'sendSmsLanguage' => 'tur',
-            'clientIp' => 'xxxx',
-            'mode' => 'test',
-            'macro_merchant_id' => 'xxxxx',
-            'bankIca' => '2030',
-            'paymentType' => '3d',
-            'amount' => '4599',
-            'mdStatus' => '1',
-            'token' => 'xxxx',
-            'phone' => 'xxxx',
-            'merchantStoreKey' => "xxxx",
-            'installmentCount' => 1,
-            'clientId' => $this->gateway->getClientId(),
-            'oid' => '',
-            'authCode' => '',
-            'procReturnCode' => '',
-            'cavv' => '',
-            'eci' => '',
-            'md' => '',
-            'rnd' => '',
-            'hash' => 'vPIt/G+3a3NmsfFnW68jMqDmp84=',
-            'hashParams' => 'clientid:oid:mdStatus:cavv:eci:md:rnd:'
-        ];
-
-        /** @var PurchaseResponse $response */
-        $response = $this->gateway->purchase($this->options)->send();
         $this->assertTrue($response->isSuccessful());
     }
 }
