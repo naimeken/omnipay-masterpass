@@ -44,8 +44,6 @@ class PurchaseRequest extends AbstractRequest
                 'amount' => $this->getAmount(),
                 'order_no' => $this->getTransactionReference(),
                 'payment_type' => $this->getPaymentType(),
-                'installment_count' => $this->getInstallmentCount(),
-                'macro_merchant_id' => $this->getMacroMerchantId(),
                 'bank_ica' => $this->getBankIca(),
                 'token' => $this->getToken(),
                 'msisdn' => $this->getPhone(),
@@ -182,17 +180,17 @@ class PurchaseRequest extends AbstractRequest
      * @param string $value
      * @return PurchaseRequest
      */
-    public function setMerchantStoreKey(string $value): PurchaseRequest
+    public function setStoreKey(string $value): PurchaseRequest
     {
-        return $this->setParameter('merchantStoreKey', $value);
+        return $this->setParameter('storeKey', $value);
     }
 
     /**
      * @return string
      */
-    public function getMerchantStoreKey(): ?string
+    public function getStoreKey(): ?string
     {
-        return $this->getParameter('merchantStoreKey');
+        return $this->getParameter('storeKey');
     }
 
     /**
@@ -397,10 +395,9 @@ class PurchaseRequest extends AbstractRequest
     }
 
     /**
-     * @return bool
      * @throws Exception
      */
-    private function hashControl(): bool
+    private function hashControl(): void
     {
         if (!$this->getHashParams()) {
             throw new RuntimeException ('Hash params error');
@@ -413,17 +410,13 @@ class PurchaseRequest extends AbstractRequest
                 $calculatedHashParams .= $this->getHashParameters()[$param] ?? '';
             }
 
-            $calculatedHashParams .= $this->getMerchantStoreKey();
+            $calculatedHashParams .= $this->getStoreKey();
             $hashCalculated = base64_encode(sha1($calculatedHashParams, true));
 
             if ($hashCalculated !== $this->getHash()) {
-                throw new RuntimeException ('Not equal calculated hash and hash');
+                throw new RuntimeException ('Expected hash not equal to calculated hash');
             }
-
-            return true;
         }
-
-        return false;
     }
 
     /**
@@ -447,7 +440,8 @@ class PurchaseRequest extends AbstractRequest
             'cavv' => $this->getCavv(),
             'eci' => $this->getEci(),
             'md' => $this->getMd(),
-            'rnd' => $this->getRnd()
+            'rnd' => $this->getRnd(),
+            'mdStatus' => $this->getMdStatus()
         ];
     }
 }
