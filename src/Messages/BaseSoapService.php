@@ -21,10 +21,7 @@ trait BaseSoapService
             $client = new SoapClient($endpoint, $this->getClientOptions());
             return $client->$function($data);
         } catch (SoapFault $exception) {
-            if (!isset($exception->detail)) {
-                throw new RuntimeException($exception->getMessage());
-            }
-            return $exception->detail;
+            throw new RuntimeException($exception->getMessage());
         }
     }
 

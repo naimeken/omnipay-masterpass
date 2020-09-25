@@ -6,7 +6,6 @@
 namespace Omnipay\Masterpass\Messages;
 
 use Exception;
-use Omnipay\Common\Exception\InvalidResponseException;
 
 abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
 {
@@ -99,9 +98,6 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
     {
         try {
             $response = $this->makeRequestToService($this->getEndpoint(), $this->getFunction(), $data);
-            $method = $this->getFunction() . 'Response';
-            $stdClass = property_exists($response, $method) ? (array)$response->$method : (array)$response;
-            return json_decode(json_encode($stdClass, JSON_THROW_ON_ERROR), true, 512, JSON_THROW_ON_ERROR);
         } catch (Exception $e) {
             return [
                 'Detail' => [
@@ -109,6 +105,11 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
                 ]
             ];
         }
+
+        $method = $this->getFunction() . 'Response';
+        $stdClass = property_exists($response, $method) ? (array)$response->$method : (array)$response;
+
+        return json_decode(json_encode($stdClass, JSON_THROW_ON_ERROR), true, 512, JSON_THROW_ON_ERROR);
     }
 
     /**

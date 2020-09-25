@@ -41,7 +41,7 @@ class PurchaseRequest extends AbstractRequest
                 'RewardLists' => null,
                 'ChequeLists' => null,
                 'MoneyCard' => null,
-                'amount' => $this->getAmount(),
+                'amount' => $this->getAmountInteger(),
                 'order_no' => $this->getTransactionReference(),
                 'payment_type' => $this->getPaymentType(),
                 'bank_ica' => $this->getBankIca(),

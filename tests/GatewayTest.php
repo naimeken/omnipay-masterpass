@@ -34,7 +34,6 @@ class GatewayTest extends GatewayTestCase
             'sendSmsLanguage' => 'tur',
             'clientIp' => 'xxxx',
             'mode' => 'test',
-            'macro_merchant_id' => 'xxx',
             'bankIca' => '2110',
             'paymentType' => '3d',
             'amount' => '28140',
