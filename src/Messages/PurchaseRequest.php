@@ -375,10 +375,9 @@ class PurchaseRequest extends AbstractRequest
     }
 
     /**
-     * @return bool
      * @throws Exception
      */
-    private function checkMdStatus(): bool
+    private function checkMdStatus(): void
     {
         if (empty($this->getBankIca())) {
             throw new RuntimeException('Not found bank value');
@@ -386,12 +385,10 @@ class PurchaseRequest extends AbstractRequest
 
         $successStatusCodes = [1, 2, 3, 4];
 
-        if (!(isset($successStatusCodes[$this->getMdStatus()])) && !in_array($this->getBankIca(),
+        if (!in_array((int)$this->getMdStatus(), $successStatusCodes, true) || !in_array($this->getBankIca(),
                 $this->getBankIcaList(), true)) {
-            throw new RuntimeException('3DSecure verification error');
+            throw new RuntimeException('3DSecure verification error for mdStatus or wrong bankIca value');
         }
-
-        return true;
     }
 
     /**
