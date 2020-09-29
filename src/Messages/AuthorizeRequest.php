@@ -61,7 +61,7 @@ class AuthorizeRequest extends AbstractRequest
             $tokenNeedingInfo = [
                 'user_id' => $this->getUserId(),
                 'reference_number' => $this->getTransactionReference(),
-                'client_id' => $this->getClientId(),
+                'client_id' => $this->getMerchantId(),
                 'phone' => $this->getPhone(),
                 'timezone' => $this->getTimezone(),
                 'validationType' => $this->getValidationType(),
