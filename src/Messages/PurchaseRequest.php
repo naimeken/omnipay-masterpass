@@ -5,7 +5,6 @@
 
 namespace Omnipay\Masterpass\Messages;
 
-use Omnipay\Common\Exception\InvalidRequestException;
 use Omnipay\Common\Exception\InvalidResponseException;
 use Omnipay\Common\Message\ResponseInterface;
 use Exception;
@@ -68,7 +67,7 @@ class PurchaseRequest extends AbstractRequest
                     'transaction_body' => $bodyParams
                 ]
             ];
-        } catch (InvalidRequestException $e) {
+        } catch (Exception $e) {
             throw new RuntimeException($e->getMessage());
         }
     }
@@ -98,6 +97,7 @@ class PurchaseRequest extends AbstractRequest
     {
         try {
             $response = $this->getResult($data);
+            $response['request'] = $data;
 
             return new PurchaseResponse($this, $response);
         } catch (Exception $e) {

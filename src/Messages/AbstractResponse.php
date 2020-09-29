@@ -32,4 +32,13 @@ class AbstractResponse extends \Omnipay\Common\Message\AbstractResponse
 
         return true;
     }
+
+    /**
+     * @return array|null
+     */
+    public function getRequest(): ?array
+    {
+        return isset($this->data['request']) ? $this->data['request'] : null;
+    }
+
 }

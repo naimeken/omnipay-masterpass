@@ -75,6 +75,7 @@ class AuthorizeRequest extends AbstractRequest
             ] : $this->getResult($data);
 
             $response = array_merge($response, $tokenNeedingInfo);
+            $response['request'] = $data;
 
             return new AuthorizeResponse($this, $response);
         } catch (Exception $e) {
