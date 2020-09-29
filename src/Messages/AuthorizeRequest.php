@@ -75,9 +75,10 @@ class AuthorizeRequest extends AbstractRequest
             ] : $this->getResult($data);
 
             $response = array_merge($response, $tokenNeedingInfo);
-            $response['request'] = $data;
+            $authorizeResponse = new AuthorizeResponse($this, $response);
+            $authorizeResponse->setServiceRequestParams($data);
 
-            return new AuthorizeResponse($this, $response);
+            return $authorizeResponse;
         } catch (Exception $e) {
             throw new InvalidResponseException(
                 'Error communicating with payment gateway: ' . $e->getMessage(),

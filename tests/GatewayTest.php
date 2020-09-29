@@ -21,7 +21,7 @@ class GatewayTest extends GatewayTestCase
     {
         /** @var Gateway gateway */
         $this->gateway = new Gateway(null, $this->getHttpRequest());
-        $this->gateway->setClientId('xxxx');
+        $this->gateway->setMerchantId('xxxx');
         $this->gateway->setEncKey('xxxx');
         $this->gateway->setMacKey('xxxx');
     }
@@ -41,7 +41,7 @@ class GatewayTest extends GatewayTestCase
             'token' => '7D3ABE5ABB09D213FEC0CE44A19F1F66A93386C609D512C229BC1C7A9001F1E08FEAE07994C3F927CB1CC03AAD6FC7E854A5AB9952AF75E23D2FD6F53B6A7C5E0D4D62477BDC082AF40B800E8B5AFD40322586E0706D16A4A751D99777D34640',
             'phone' => 'xxx',
             'storeKey' => "xxx",
-            'clientId' => $this->gateway->getClientId(),
+            'clientId' => 'xxxx',
             'oid' => '47974',
             'authCode' => '',
             'procReturnCode' => '',

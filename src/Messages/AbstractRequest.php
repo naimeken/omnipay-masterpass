@@ -128,4 +128,22 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
     {
         return $this->getParameter('phone');
     }
+
+
+    /**
+     * @param string $value
+     * @return AbstractRequest
+     */
+    public function setMerchantId(string $value): AbstractRequest
+    {
+        return $this->setParameter('merchantId', $value);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMerchantId()
+    {
+        return $this->getParameter('merchantId');
+    }
 }

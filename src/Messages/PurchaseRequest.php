@@ -28,7 +28,7 @@ class PurchaseRequest extends AbstractRequest
             }
 
             $headerParams = [
-                'client_id' => $this->getClientId(),
+                'client_id' => $this->getMerchantId(),
                 'request_datetime' => gmdate("Y-m-d\TH:i:s") . date('P'),
                 'request_reference_no' => $this->getTransactionReference(),
                 'send_sms' => $this->getSendSms(),
@@ -97,9 +97,10 @@ class PurchaseRequest extends AbstractRequest
     {
         try {
             $response = $this->getResult($data);
-            $response['request'] = $data;
+            $purchaseResponse = new PurchaseResponse($this, $response);
+            $purchaseResponse->setServiceRequestParams($data);
 
-            return new PurchaseResponse($this, $response);
+            return $purchaseResponse;
         } catch (Exception $e) {
             throw new InvalidResponseException(
                 'Error communicating with payment gateway: ' . $e->getMessage(),

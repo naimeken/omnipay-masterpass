@@ -40,18 +40,18 @@ class Gateway extends AbstractGateway
     /**
      * @return string
      */
-    public function getClientId(): string
+    public function getMerchantId(): string
     {
-        return $this->getParameter('clientId');
+        return $this->getParameter('merchantId');
     }
 
     /**
      * @param string $value
      * @return Gateway
      */
-    public function setClientId(string $value): Gateway
+    public function setMerchantId(string $value): Gateway
     {
-        return $this->setParameter('clientId', $value);
+        return $this->setParameter('merchantId', $value);
     }
 
     /**
