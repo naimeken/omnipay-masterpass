@@ -61,7 +61,7 @@ class AuthorizeRequest extends AbstractRequest
             $tokenNeedingInfo = [
                 'user_id' => $this->getUserId(),
                 'reference_number' => $this->getTransactionReference(),
-                'client_id' => $this->getClientId(),
+                'client_id' => $this->getMerchantId(),
                 'phone' => $this->getPhone(),
                 'timezone' => $this->getTimezone(),
                 'validationType' => $this->getValidationType(),
@@ -75,8 +75,10 @@ class AuthorizeRequest extends AbstractRequest
             ] : $this->getResult($data);
 
             $response = array_merge($response, $tokenNeedingInfo);
+            $authorizeResponse = new AuthorizeResponse($this, $response);
+            $authorizeResponse->setServiceRequestParams($data);
 
-            return new AuthorizeResponse($this, $response);
+            return $authorizeResponse;
         } catch (Exception $e) {
             throw new InvalidResponseException(
                 'Error communicating with payment gateway: ' . $e->getMessage(),

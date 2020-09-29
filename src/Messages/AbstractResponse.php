@@ -7,6 +7,8 @@ namespace Omnipay\Masterpass\Messages;
 
 class AbstractResponse extends \Omnipay\Common\Message\AbstractResponse
 {
+    /** @var array */
+    protected $serviceRequestParams;
 
     /**
      * @return string|null
@@ -32,4 +34,21 @@ class AbstractResponse extends \Omnipay\Common\Message\AbstractResponse
 
         return true;
     }
+
+    /**
+     * @return array
+     */
+    public function getServiceRequestParams(): array
+    {
+        return $this->serviceRequestParams;
+    }
+
+    /**
+     * @param array $serviceRequestParams
+     */
+    public function setServiceRequestParams(array $serviceRequestParams): void
+    {
+        $this->serviceRequestParams = $serviceRequestParams;
+    }
+
 }
