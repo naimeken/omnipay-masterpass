@@ -20,7 +20,7 @@ class AuthorizeRequest extends AbstractRequest
     public function getData(): array
     {
         $headerParams = array(
-            'client_id' => $this->getClientId(),
+            'client_id' => $this->getMerchantId(),
             'request_datetime' => date('Y-m-d\TH:i:s'),
             'request_reference_no' => $this->getTransactionReference(),
             'send_sms' => $this->getSendSms(),
