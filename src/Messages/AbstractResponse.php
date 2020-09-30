@@ -15,12 +15,12 @@ class AbstractResponse extends \Omnipay\Common\Message\AbstractResponse
      */
     public function getMessage(): ?string
     {
-        return $this->data['Detail']['response_desc'] ?? null;
+        return $this->data['Detail']->response_desc ?? null;
     }
 
     public function getCode(): ?string
     {
-        return $this->data['Detail']['response_code'] ?? null;
+        return $this->data['Detail']->response_code ?? null;
     }
 
     /**

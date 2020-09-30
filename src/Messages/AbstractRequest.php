@@ -5,7 +5,6 @@
 
 namespace Omnipay\Masterpass\Messages;
 
-use Exception;
 
 abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
 {
@@ -96,14 +95,10 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
      */
     public function getResult(array $data): array
     {
-        try {
-            $response = $this->makeRequestToService($this->getEndpoint(), $this->getFunction(), $data);
-        } catch (Exception $e) {
-            return [
-                'Detail' => [
-                    'response_desc' => $e->getMessage()
-                ]
-            ];
+        $response = $this->makeRequestToService($this->getEndpoint(), $this->getFunction(), $data);
+
+        if ($response->Detail) {
+            return (array)$response;
         }
 
         $method = $this->getFunction() . 'Response';
