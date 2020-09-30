@@ -38,14 +38,6 @@ class Gateway extends AbstractGateway
     }
 
     /**
-     * @return string
-     */
-    public function getMerchantId(): string
-    {
-        return $this->getParameter('merchantId');
-    }
-
-    /**
      * @param string $value
      * @return Gateway
      */
