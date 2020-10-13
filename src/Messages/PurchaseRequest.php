@@ -37,25 +37,18 @@ class PurchaseRequest extends AbstractRequest
             ];
 
             $bodyParams = [
-                'RewardLists' => null,
-                'ChequeLists' => null,
-                'MoneyCard' => null,
                 'amount' => $this->getAmountInteger(),
                 'order_no' => $this->getTransactionReference(),
                 'payment_type' => $this->getPaymentType(),
                 'bank_ica' => $this->getBankIca(),
                 'token' => $this->getToken(),
                 'msisdn' => $this->getPhone(),
-                'asseco_order_details' => null,
                 'order_details' => null,
-                'bill_detail' => null,
-                'delivery_details' => null,
-                'buyer_details' => null,
-                'anti_fraud_details' => null,
-                'other_details' => null,
-                'custom_fields' => null,
-                'campaign_id' => null
+                'bill_details' => null,
+                'delivery_details' => null
             ];
+
+            $bodyParams = array_filter(array_merge($bodyParams, $this->getOptionalParameters()));
 
             if ($this->getMacroMerchantId()) {
                 $bodyParams['macro_merchant_id'] = $this->getMacroMerchantId();
@@ -362,6 +355,23 @@ class PurchaseRequest extends AbstractRequest
     public function getInstallmentCount()
     {
         return $this->getParameter('installmentCount');
+    }
+
+    /**
+     * @return array|null
+     */
+    public function getOptionalParameters(): ?array
+    {
+        return $this->getParameter('optionalParameters') ?? [];
+    }
+
+    /**
+     * @param array $value
+     * @return PurchaseRequest
+     */
+    public function setOptionalParameters(array $value): PurchaseRequest
+    {
+        return $this->setParameter('optionalParameters', $value);
     }
 
     /**

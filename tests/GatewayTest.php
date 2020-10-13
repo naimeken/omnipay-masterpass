@@ -28,6 +28,57 @@ class GatewayTest extends GatewayTestCase
 
     public function testPurchase()
     {
+        $optionalParameters = [
+            'order_details' => [
+                'orders' => [
+                    'list_item' => [
+                        [
+                            'order_product_name' => 'test',
+                            'order_product_code' => 1,
+                            'order_price' => 100,
+                            'order_vat' => '', // optional
+                            'order_qty' => 1,
+                            'order_product_info' => 'desc' // optional
+                        ],
+                        [
+                            'order_product_name' => 'test1',
+                            'order_product_code' => 2,
+                            'order_price' => 100,
+                            'order_vat' => '', // optional
+                            'order_qty' => 1,
+                            'order_product_info' => 'desc1' // optional
+                        ]
+                    ]
+                ],
+                'bill_details' => [
+                    'bill_last_name' => 'test1',
+                    'bill_first_name' => 'test1',
+                    'bill_email' => 'test1@test.com',
+                    'bill_phone' => '905555555555',
+                    'bill_country_code' => 'TR',
+                    'bill_fax' => '', // optional
+                    'bill_address' => '', // optional
+                    'bill_address2' => '', // optional
+                    'bill_zip_code' => 34250, // optional
+                    'bill_city' => '', // optional
+                    'bill_state' => '' // optional
+                ],
+                'delivery_details' => [
+                    'delivery_last_name' => 'test1', // optional
+                    'delivery_first_name' => 'test1', // optional
+                    'delivery_email' => 'test1@test.com', // optional
+                    'delivery_phone' => '905555555555', // optional
+                    'delivery_company' => '', // optional
+                    'delivery_country_code' => 'TR', // optional
+                    'delivery_address' => '', // optional
+                    'delivery_address2' => '', // optional
+                    'delivery_zip_code' => 34250, // optional
+                    'delivery_city' => '', // optional
+                    'delivery_state' => '' // optional
+                ]
+            ]
+        ];
+
         $this->options = [
             'transactionReference' => '47974',
             'sendSms' => 'Y',
@@ -50,7 +101,8 @@ class GatewayTest extends GatewayTestCase
             'md' => '520019:2A4BA901C286392A0A7AB93D5980502D19337C9C409962FE854EEF644720608C:3248:##100100000',
             'rnd' => 'bpEeh/85DfvdZ58NWTDX',
             'hash' => 'z3djbwPUdXXB0UXpw2Amb3Uuago=',
-            'hashParams' => 'clientid:oid:mdStatus:cavv:eci:md:rnd:'
+            'hashParams' => 'clientid:oid:mdStatus:cavv:eci:md:rnd:',
+            'optionalParameters' => $optionalParameters // optional
         ];
 
         /** @var PurchaseResponse $response */
@@ -77,6 +129,7 @@ class GatewayTest extends GatewayTestCase
         ];
 
 
+        /** @var AuthorizeResponse $response */
         $response = $this->gateway->authorize($this->options)->send();
         $this->assertTrue($response->isSuccessful());
     }
