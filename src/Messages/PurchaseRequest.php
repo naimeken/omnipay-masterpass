@@ -433,7 +433,7 @@ class PurchaseRequest extends AbstractRequest
      */
     private function getBankIcaList(): array
     {
-        return ['2030', '2110', '3771', '1684', '9165', '3039', '7656'];
+        return ['2030', '2110', '3771', '1684', '9165', '3039', '7656', '1000'];
     }
 
     /**
