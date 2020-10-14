@@ -11,6 +11,9 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
     use BaseSoapService;
 
     public const BASE = 'MMIUIMasterPass_V2/MerchantServices/';
+
+    protected const BANK_ICA_PAYU = '1000';
+
     /** @var array */
     private $serviceList = [
         'test' => 'https://test.masterpassturkiye.com/',
@@ -95,6 +98,10 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
      */
     public function getResult(array $data): array
     {
+        if (isset($data['bank_ica']) && $data['bank_ica'] === self::BANK_ICA_PAYU) {
+            return $this->getParameters();
+        }
+
         $response = $this->makeRequestToService($this->getEndpoint(), $this->getFunction(), $data);
 
         if ($response->Detail) {

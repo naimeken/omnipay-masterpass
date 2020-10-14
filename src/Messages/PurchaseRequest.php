@@ -22,9 +22,15 @@ class PurchaseRequest extends AbstractRequest
     public function getData()
     {
         try {
-            if ($this->getPaymentType() === self::SECURE_3D) {
+            if ($this->getPaymentType() === self::SECURE_3D || $this->getBankIca() === self::BANK_ICA_PAYU) {
                 $this->checkMdStatus();
                 $this->hashControl();
+            }
+
+            if ($this->getBankIca() === self::BANK_ICA_PAYU) {
+                return [
+                    'bank_ica' => $this->getBankIca()
+                ];
             }
 
             $headerParams = [
@@ -129,11 +135,11 @@ class PurchaseRequest extends AbstractRequest
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getBankIca(): string
+    public function getBankIca(): ?string
     {
-        return $this->getParameter('bankIca');
+        return $this->getParameter('bankIca') ?? null;
     }
 
     /**
@@ -385,20 +391,15 @@ class PurchaseRequest extends AbstractRequest
         ];
     }
 
-    /**
-     * @throws Exception
-     */
     private function checkMdStatus(): void
     {
-        if (empty($this->getBankIca())) {
-            throw new RuntimeException('Not found bank value');
-        }
+        if ($this->getBankIca() !== self::BANK_ICA_PAYU) {
+            $successStatusCodes = [1, 2, 3, 4];
 
-        $successStatusCodes = [1, 2, 3, 4];
-
-        if (!in_array((int)$this->getMdStatus(), $successStatusCodes, true) || !in_array($this->getBankIca(),
-                $this->getBankIcaList(), true)) {
-            throw new RuntimeException('3DSecure verification error for mdStatus or wrong bankIca value');
+            if (!in_array((int)$this->getMdStatus(), $successStatusCodes, true) || !in_array($this->getBankIca(),
+                    $this->getBankIcaList(), true)) {
+                throw new RuntimeException('3DSecure verification error for mdStatus or wrong bankIca value');
+            }
         }
     }
 
