@@ -139,7 +139,7 @@ class PurchaseRequest extends AbstractRequest
      */
     public function getBankIca(): ?string
     {
-        return $this->getParameter('bankIca') ?? null;
+        return $this->getParameter('bankIca');
     }
 
     /**

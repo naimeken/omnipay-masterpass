@@ -95,6 +95,7 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
     /**
      * @param array $data
      * @return array
+     * @throws \JsonException
      */
     public function getResult(array $data): array
     {
