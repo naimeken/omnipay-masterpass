@@ -171,7 +171,7 @@ class PurchaseRequest extends AbstractRequest
     /**
      * @return string
      */
-    public function getMdStatus(): string
+    public function getMdStatus(): ?string
     {
         return $this->getParameter('mdStatus');
     }
@@ -324,7 +324,7 @@ class PurchaseRequest extends AbstractRequest
     /**
      * @return string
      */
-    public function getRnd(): string
+    public function getRnd(): ?string
     {
         return $this->getParameter('rnd');
     }
@@ -341,7 +341,7 @@ class PurchaseRequest extends AbstractRequest
     /**
      * @return string
      */
-    public function getHash(): string
+    public function getHash(): ?string
     {
         return $this->getParameter('hash');
     }
