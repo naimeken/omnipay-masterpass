@@ -205,7 +205,7 @@ class PurchaseRequest extends AbstractRequest
     /**
      * @return string
      */
-    public function getHashParams(): string
+    public function getHashParams(): ?string
     {
         return $this->getParameter('hashParams');
     }
@@ -222,7 +222,7 @@ class PurchaseRequest extends AbstractRequest
     /**
      * @return string
      */
-    public function getOid(): string
+    public function getOid(): ?string
     {
         return $this->getParameter('oid');
     }
@@ -307,7 +307,7 @@ class PurchaseRequest extends AbstractRequest
     /**
      * @return string
      */
-    public function getMd(): string
+    public function getMd(): ?string
     {
         return $this->getParameter('md');
     }
