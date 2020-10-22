@@ -44,7 +44,7 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
     public function getMode(): string
     {
         $testMode = ($this->getTestMode() === true) ? 'test' : null;
-        $mode = $this->getParameter('mode') ?? $testMode ?? 'prod';
+        $mode = $this->getParameter('paymentEnv') ?? $testMode ?? 'prod';
 
         return $this->serviceList[$mode];
     }
@@ -53,9 +53,9 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
      * @param string $value
      * @return AbstractRequest
      */
-    public function setMode(string $value): AbstractRequest
+    public function setPaymentEnv(string $value): AbstractRequest
     {
-        return $this->setParameter('mode', $value);
+        return $this->setParameter('paymentEnv', $value);
     }
 
     /**
