@@ -11,8 +11,7 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
     use BaseSoapService;
 
     public const BASE = 'MMIUIMasterPass_V2/MerchantServices/';
-
-    protected const BANK_ICA_PAYU = '1000';
+    public const SECURE_3D = 'SECURE_3D';
 
     /** @var array */
     private $serviceList = [
@@ -98,14 +97,9 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
     /**
      * @param array $data
      * @return array
-     * @throws \JsonException
      */
     public function getResult(array $data): array
     {
-        if (isset($data['bank_ica']) && $data['bank_ica'] === self::BANK_ICA_PAYU) {
-            return $this->getParameters();
-        }
-
         $response = $this->makeRequestToService($this->getEndpoint(), $this->getFunction(), $data);
 
         if ($response->Detail) {
@@ -150,5 +144,158 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
     public function getMerchantId()
     {
         return $this->getParameter('merchantId');
+    }
+
+    /**
+     * @param string $value
+     * @return AbstractRequest
+     */
+    public function setMacroMerchantId(string $value): AbstractRequest
+    {
+        return $this->setParameter('macroMerchantId', $value);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMacroMerchantId()
+    {
+        return $this->getParameter('macroMerchantId');
+    }
+
+    /**
+     * @param string $value
+     * @return AbstractRequest
+     */
+    public function setBankIca(string $value): AbstractRequest
+    {
+        return $this->setParameter('bankIca', $value);
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getBankIca(): ?string
+    {
+        return $this->getParameter('bankIca');
+    }
+
+    /**
+     * @param string $value
+     * @return AbstractRequest
+     */
+    public function setPaymentType(string $value): AbstractRequest
+    {
+        return $this->setParameter('paymentType', $value);
+    }
+
+    /**
+     * @return string
+     */
+    public function getPaymentType(): string
+    {
+        return $this->getPaymentTypes()[$this->getParameter('paymentType')];
+    }
+
+    /**
+     * @return array|null
+     */
+    public function getOptionalParameters(): ?array
+    {
+        return $this->getParameter('optionalParameters') ?? [];
+    }
+
+    /**
+     * @param array $value
+     * @return AbstractRequest
+     */
+    public function setOptionalParameters(array $value): AbstractRequest
+    {
+        return $this->setParameter('optionalParameters', $value);
+    }
+
+    /**
+     * @param string $value
+     * @return AbstractRequest
+     */
+    public function setStoreKey(string $value): AbstractRequest
+    {
+        return $this->setParameter('storeKey', $value);
+    }
+
+    /**
+     * @return string
+     */
+    public function getStoreKey(): ?string
+    {
+        return $this->getParameter('storeKey');
+    }
+
+    /**
+     * @return string
+     */
+    public function getHash(): ?string
+    {
+        return $this->getParameter('hash');
+    }
+
+    /**
+     * @param string $value
+     * @return AbstractRequest
+     */
+    public function setHash(string $value): AbstractRequest
+    {
+        return $this->setParameter('hash', $value);
+    }
+
+    /**
+     * @return array
+     */
+    protected function requestParams(): array
+    {
+        $headerParams = [
+            'client_id' => $this->getMerchantId(),
+            'request_datetime' => gmdate("Y-m-d\TH:i:s") . date('P'),
+            'request_reference_no' => $this->getTransactionReference(),
+            'send_sms' => $this->getSendSms(),
+            'send_sms_language' => $this->getSendSmsLanguage(),
+            'ip_address' => $this->getClientIp()
+        ];
+
+        $bodyParams = [
+            'amount' => $this->getAmountInteger(),
+            'order_no' => $this->getTransactionReference(),
+            'payment_type' => $this->getPaymentType(),
+            'bank_ica' => $this->getBankIca(),
+            'token' => $this->getToken(),
+            'msisdn' => $this->getPhone(),
+            'order_details' => null,
+            'bill_details' => null,
+            'delivery_details' => null
+        ];
+
+        $bodyParams = array_filter(array_merge($bodyParams, $this->getOptionalParameters()));
+
+        if ($this->getMacroMerchantId()) {
+            $bodyParams['macro_merchant_id'] = $this->getMacroMerchantId();
+        }
+
+        return [
+            'CommitPurchaseRequest' => [
+                'transaction_header' => $headerParams,
+                'transaction_body' => $bodyParams
+            ]
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    private function getPaymentTypes(): array
+    {
+        return [
+            '3d' => 'SECURE_3D',
+            'direct' => 'DIRECT_PAYMENT'
+        ];
     }
 }
