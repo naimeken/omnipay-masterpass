@@ -85,13 +85,13 @@ class GatewayTest extends GatewayTestCase
             'sendSmsLanguage' => 'tur',
             'clientIp' => 'xxxx',
             'mode' => 'test',
-            'bankIca' => '2110',
+            'bankIca' => '1000',
             'paymentType' => '3d',
             'amount' => '28140',
             'mdStatus' => '2',
             'token' => '7D3ABE5ABB09D213FEC0CE44A19F1F66A93386C609D512C229BC1C7A9001F1E08FEAE07994C3F927CB1CC03AAD6FC7E854A5AB9952AF75E23D2FD6F53B6A7C5E0D4D62477BDC082AF40B800E8B5AFD40322586E0706D16A4A751D99777D34640',
             'phone' => 'xxx',
-            'storeKey' => "xxx",
+            'storeKey' => "xxxx",
             'clientId' => 'xxxx',
             'oid' => '47974',
             'authCode' => '',
@@ -100,9 +100,10 @@ class GatewayTest extends GatewayTestCase
             'eci' => '',
             'md' => '520019:2A4BA901C286392A0A7AB93D5980502D19337C9C409962FE854EEF644720608C:3248:##100100000',
             'rnd' => 'bpEeh/85DfvdZ58NWTDX',
-            'hash' => 'z3djbwPUdXXB0UXpw2Amb3Uuago=',
+            'hash' => 'xxxx',
             'hashParams' => 'clientid:oid:mdStatus:cavv:eci:md:rnd:',
-            'optionalParameters' => $optionalParameters // optional
+            'hashParamsVal' => 'xxxx',
+            //'optionalParameters' => $optionalParameters // optional
         ];
 
         /** @var PurchaseResponse $response */

@@ -24,7 +24,7 @@ class PurchaseRequest extends AbstractRequest
         try {
             if ($this->getPaymentType() === self::SECURE_3D || $this->getBankIca() === self::BANK_ICA_PAYU) {
                 $this->checkMdStatus();
-                $this->hashControl();
+                $this->getBankIca() === self::BANK_ICA_PAYU ? $this->payuHashControl() : $this->hashControl();
             }
 
             if ($this->getBankIca() === self::BANK_ICA_PAYU) {
@@ -381,6 +381,23 @@ class PurchaseRequest extends AbstractRequest
     }
 
     /**
+     * @return string|null
+     */
+    public function getHashParamsVal(): ?string
+    {
+        return $this->getParameter('hashParamsVal');
+    }
+
+    /**
+     * @param string $value
+     * @return PurchaseRequest
+     */
+    public function setHashParamsVal(string $value): PurchaseRequest
+    {
+        return $this->setParameter('hashParamsVal', $value);
+    }
+
+    /**
      * @return array
      */
     private function getPaymentTypes(): array
@@ -425,6 +442,23 @@ class PurchaseRequest extends AbstractRequest
             if ($hashCalculated !== $this->getHash()) {
                 throw new RuntimeException ('Expected hash not equal to calculated hash');
             }
+        }
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function payuHashControl(): void
+    {
+        if (!$this->getHashParamsVal()) {
+            throw new RuntimeException ('HashParamsVal params not found');
+        }
+
+        $calculatedHashParams = $this->getHashParamsVal();
+        $hashCalculated = hash_hmac("md5", $calculatedHashParams, $this->getStoreKey());
+
+        if ($hashCalculated !== $this->getHash()) {
+            throw new RuntimeException ('Expected hash not equal to calculated hash');
         }
     }
 
