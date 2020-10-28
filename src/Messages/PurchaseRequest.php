@@ -13,7 +13,6 @@ use RuntimeException;
 class PurchaseRequest extends AbstractRequest
 {
     public const ENDPOINT = self::BASE . 'MPGCommitPurchaseService.asmx?wsdl';
-    private const SECURE_3D = 'SECURE_3D';
 
     /**
      * @return array|mixed
@@ -22,50 +21,12 @@ class PurchaseRequest extends AbstractRequest
     public function getData()
     {
         try {
-            if ($this->getPaymentType() === self::SECURE_3D || $this->getBankIca() === self::BANK_ICA_PAYU) {
+            if ($this->getPaymentType() === self::SECURE_3D) {
                 $this->checkMdStatus();
                 $this->hashControl();
             }
 
-            if ($this->getBankIca() === self::BANK_ICA_PAYU) {
-                return [
-                    'bank_ica' => $this->getBankIca()
-                ];
-            }
-
-            $headerParams = [
-                'client_id' => $this->getMerchantId(),
-                'request_datetime' => gmdate("Y-m-d\TH:i:s") . date('P'),
-                'request_reference_no' => $this->getTransactionReference(),
-                'send_sms' => $this->getSendSms(),
-                'send_sms_language' => $this->getSendSmsLanguage(),
-                'ip_address' => $this->getClientIp()
-            ];
-
-            $bodyParams = [
-                'amount' => $this->getAmountInteger(),
-                'order_no' => $this->getTransactionReference(),
-                'payment_type' => $this->getPaymentType(),
-                'bank_ica' => $this->getBankIca(),
-                'token' => $this->getToken(),
-                'msisdn' => $this->getPhone(),
-                'order_details' => null,
-                'bill_details' => null,
-                'delivery_details' => null
-            ];
-
-            $bodyParams = array_filter(array_merge($bodyParams, $this->getOptionalParameters()));
-
-            if ($this->getMacroMerchantId()) {
-                $bodyParams['macro_merchant_id'] = $this->getMacroMerchantId();
-            }
-
-            return [
-                'CommitPurchaseRequest' => [
-                    'transaction_header' => $headerParams,
-                    'transaction_body' => $bodyParams
-                ]
-            ];
+            return $this->requestParams();
         } catch (Exception $e) {
             throw new RuntimeException($e->getMessage());
         }
@@ -108,56 +69,6 @@ class PurchaseRequest extends AbstractRequest
         }
     }
 
-    /**
-     * @param string $value
-     * @return PurchaseRequest
-     */
-    public function setMacroMerchantId(string $value): PurchaseRequest
-    {
-        return $this->setParameter('macroMerchantId', $value);
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getMacroMerchantId()
-    {
-        return $this->getParameter('macroMerchantId');
-    }
-
-    /**
-     * @param string $value
-     * @return PurchaseRequest
-     */
-    public function setBankIca(string $value): PurchaseRequest
-    {
-        return $this->setParameter('bankIca', $value);
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getBankIca(): ?string
-    {
-        return $this->getParameter('bankIca');
-    }
-
-    /**
-     * @param string $value
-     * @return PurchaseRequest
-     */
-    public function setPaymentType(string $value): PurchaseRequest
-    {
-        return $this->setParameter('paymentType', $value);
-    }
-
-    /**
-     * @return string
-     */
-    public function getPaymentType(): string
-    {
-        return $this->getPaymentTypes()[$this->getParameter('paymentType')];
-    }
 
     /**
      * @param string $value
@@ -180,23 +91,6 @@ class PurchaseRequest extends AbstractRequest
      * @param string $value
      * @return PurchaseRequest
      */
-    public function setStoreKey(string $value): PurchaseRequest
-    {
-        return $this->setParameter('storeKey', $value);
-    }
-
-    /**
-     * @return string
-     */
-    public function getStoreKey(): ?string
-    {
-        return $this->getParameter('storeKey');
-    }
-
-    /**
-     * @param string $value
-     * @return PurchaseRequest
-     */
     public function setHashParams(string $value): PurchaseRequest
     {
         return $this->setParameter('hashParams', $value);
@@ -208,15 +102,6 @@ class PurchaseRequest extends AbstractRequest
     public function getHashParams(): ?string
     {
         return $this->getParameter('hashParams');
-    }
-
-    /**
-     * @param string $value
-     * @return PurchaseRequest
-     */
-    public function setInstallmentCount(string $value): PurchaseRequest
-    {
-        return $this->setParameter('installmentCount', $value);
     }
 
     /**
@@ -339,23 +224,6 @@ class PurchaseRequest extends AbstractRequest
     }
 
     /**
-     * @return string
-     */
-    public function getHash(): ?string
-    {
-        return $this->getParameter('hash');
-    }
-
-    /**
-     * @param string $value
-     * @return PurchaseRequest
-     */
-    public function setHash(string $value): PurchaseRequest
-    {
-        return $this->setParameter('hash', $value);
-    }
-
-    /**
      * @return mixed
      */
     public function getInstallmentCount()
@@ -364,42 +232,21 @@ class PurchaseRequest extends AbstractRequest
     }
 
     /**
-     * @return array|null
-     */
-    public function getOptionalParameters(): ?array
-    {
-        return $this->getParameter('optionalParameters') ?? [];
-    }
-
-    /**
-     * @param array $value
+     * @param string $value
      * @return PurchaseRequest
      */
-    public function setOptionalParameters(array $value): PurchaseRequest
+    public function setInstallmentCount(string $value): PurchaseRequest
     {
-        return $this->setParameter('optionalParameters', $value);
-    }
-
-    /**
-     * @return array
-     */
-    private function getPaymentTypes(): array
-    {
-        return [
-            '3d' => 'SECURE_3D',
-            'direct' => 'DIRECT_PAYMENT'
-        ];
+        return $this->setParameter('installmentCount', $value);
     }
 
     private function checkMdStatus(): void
     {
-        if ($this->getBankIca() !== self::BANK_ICA_PAYU) {
-            $successStatusCodes = [1, 2, 3, 4];
+        $successStatusCodes = [1, 2, 3, 4];
 
-            if (!in_array((int)$this->getMdStatus(), $successStatusCodes, true) || !in_array($this->getBankIca(),
-                    $this->getBankIcaList(), true)) {
-                throw new RuntimeException('3DSecure verification error for mdStatus or wrong bankIca value');
-            }
+        if (!in_array((int)$this->getMdStatus(), $successStatusCodes, true) || !in_array($this->getBankIca(),
+                $this->getBankIcaList(), true)) {
+            throw new RuntimeException('3DSecure verification error for mdStatus or wrong bankIca value');
         }
     }
 
@@ -433,7 +280,7 @@ class PurchaseRequest extends AbstractRequest
      */
     private function getBankIcaList(): array
     {
-        return ['2030', '2110', '3771', '1684', '9165', '3039', '7656', '1000'];
+        return ['2030', '2110', '3771', '1684', '9165', '3039', '7656'];
     }
 
     /**

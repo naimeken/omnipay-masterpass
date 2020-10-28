@@ -9,6 +9,7 @@ use Omnipay\Common\AbstractGateway;
 use Omnipay\Common\Message\AbstractRequest;
 use Omnipay\Common\Message\RequestInterface;
 use Omnipay\Masterpass\Messages\AuthorizeRequest;
+use Omnipay\Masterpass\Messages\PayUPurchaseRequest;
 use Omnipay\Masterpass\Messages\PurchaseRequest;
 
 
@@ -26,6 +27,8 @@ use Omnipay\Masterpass\Messages\PurchaseRequest;
  */
 class Gateway extends AbstractGateway
 {
+    private const BANK_ICA_PAYU = '1000';
+
     /**
      * Get gateway display name
      *
@@ -66,11 +69,18 @@ class Gateway extends AbstractGateway
 
     /**
      * @param array $parameters
-     * @return RequestInterface
+     * @return AbstractRequest|RequestInterface
+     * @throws \Exception
      */
     public function purchase(array $parameters = []): RequestInterface
     {
-        return $this->createRequest(PurchaseRequest::class, $parameters);
+        $bankIca = $parameters['bankIca'] ?? null;
+
+        if (empty($bankIca)) {
+            throw new \Exception('bankIca not found');
+        }
+
+        return ($bankIca === self::BANK_ICA_PAYU) ? $this->payUPurchaseRequest($parameters) : $this->defaultPurchaseRequest($parameters);
     }
 
     /**
@@ -80,5 +90,23 @@ class Gateway extends AbstractGateway
     public function authorize(array $parameters = []): RequestInterface
     {
         return $this->createRequest(AuthorizeRequest::class, $parameters);
+    }
+
+    /**
+     * @param array $parameters
+     * @return AbstractRequest|RequestInterface
+     */
+    public function defaultPurchaseRequest(array $parameters = []): RequestInterface
+    {
+        return $this->createRequest(PurchaseRequest::class, $parameters);
+    }
+
+    /**
+     * @param array $parameters
+     * @return AbstractRequest|RequestInterface
+     */
+    public function payUPurchaseRequest(array $parameters = []): RequestInterface
+    {
+        return $this->createRequest(PayUPurchaseRequest::class, $parameters);
     }
 }
