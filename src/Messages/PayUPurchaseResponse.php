@@ -12,7 +12,7 @@ class PayUPurchaseResponse extends AbstractResponse
     private const SUCCESS_RESPONSE_CODE = '0000';
 
     /** @var string|null */
-    private $message = null;
+    private $message;
 
     /** @var bool */
     private $isSuccess = false;
@@ -51,8 +51,10 @@ class PayUPurchaseResponse extends AbstractResponse
      */
     private function hashControllable(): bool
     {
-        if (!isset($this->data['responseCode']) || (isset($this->data['responseCode']) && $this->data['responseCode'] !== self::SUCCESS_RESPONSE_CODE)) {
-            $this->message = 'Payu response code error';
+        $responseCode = $this->data['responseCode'] ?? 'Payu response code error';
+
+        if ($responseCode !== self::SUCCESS_RESPONSE_CODE) {
+            $this->message = $responseCode;
             return false;
         }
 
@@ -64,7 +66,7 @@ class PayUPurchaseResponse extends AbstractResponse
      */
     private function hashControl(): bool
     {
-        if (!isset($this->data['hashParamsVal']) || !isset($this->data['storeKey']) || !isset($this->data['hash'])) {
+        if (!isset($this->data['hashParamsVal'], $this->data['storeKey'], $this->data['hash'])) {
             $this->message = 'HashParamsVal, storeKey or hash params not found';
 
             return false;
@@ -74,7 +76,7 @@ class PayUPurchaseResponse extends AbstractResponse
         $hashCalculated = hash_hmac("md5", $calculatedHashParams, $this->data['storeKey']);
 
         if ($hashCalculated !== $this->data['hash']) {
-            $this->message = 'Expected hash not equal to calculated hash';
+            $this->message = 'HASH_MISTMATCH';
 
             return false;
         }
