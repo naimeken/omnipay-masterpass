@@ -76,7 +76,8 @@ class AuthorizeRequest extends AbstractRequest
 
             $response = array_merge($response, $tokenNeedingInfo);
             $authorizeResponse = new AuthorizeResponse($this, $response);
-            $authorizeResponse->setServiceRequestParams($data);
+            $requestParams = $this->getRequestParams();
+            $authorizeResponse->setServiceRequestParams($requestParams);
 
             return $authorizeResponse;
         } catch (Exception $e) {
@@ -226,6 +227,18 @@ class AuthorizeRequest extends AbstractRequest
         $rTime .= dechex($s);
 
         return $rTime;
+    }
+
+    /**
+     * @return array
+     */
+    private function getRequestParams(): array
+    {
+        return [
+            'url' => ($this->getEncKey() && $this->getMacKey()) ? '' : $this->getEndPoint(),
+            'data' => ($this->getEncKey() && $this->getMacKey()) ? [] : $this->getData(),
+            'method' => ($this->getEncKey() && $this->getMacKey()) ? '' : $this->getFunction()
+        ];
     }
 }
 
