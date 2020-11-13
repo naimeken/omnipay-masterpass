@@ -58,7 +58,8 @@ class PurchaseRequest extends AbstractRequest
         try {
             $response = $this->getResult($data);
             $purchaseResponse = new PurchaseResponse($this, $response);
-            $purchaseResponse->setServiceRequestParams($data);
+            $requestParams = $this->getRequestParams();
+            $purchaseResponse->setServiceRequestParams($requestParams);
 
             return $purchaseResponse;
         } catch (Exception $e) {
@@ -298,6 +299,19 @@ class PurchaseRequest extends AbstractRequest
             'md' => $this->getMd(),
             'rnd' => $this->getRnd(),
             'mdStatus' => $this->getMdStatus()
+        ];
+    }
+
+    /**
+     * @return array
+     * @throws Exception
+     */
+    private function getRequestParams(): array
+    {
+        return [
+            'url' => $this->getEndPoint(),
+            'data' => $this->getData(),
+            'method' => $this->getFunction()
         ];
     }
 }
