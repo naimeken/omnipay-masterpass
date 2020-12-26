@@ -1,0 +1,24 @@
+HTTP/1.1 200 OK
+Server: nginx
+Date: Fri, 11 Nov 2020 18:25:28 GMT
+Content-Type: application/json;charset=utf-8
+Content-Length: 2966
+Connection: keep-alive
+Cache-Control: no-cache, no-store
+Request-Id: req_8PDHeZazN2LwML
+Access-Control-Allow-Credentials: true
+Access-Control-Max-Age: 300
+
+[
+ {
+  "mac_key"=>"581A5596067509C35B11F9BEC936EFA9"
+  "encryption_key"=>"DF17E253BB36608309118DF6483385BB"
+  "user_id"=>"abc123"
+  "reference_number"=>"324324"
+  "client_id"=>"34703818"
+  "phone"=>"905555555555"
+  "timezone"=>"03"
+  "validationType"=>"00"
+  "merchantType"=>"00"
+  "validatedMsisdn"=>"00"
+}]

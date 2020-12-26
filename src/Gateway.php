@@ -41,6 +41,20 @@ class Gateway extends AbstractGateway
     }
 
     /**
+     * Default parameters.
+     *
+     * @return array
+     */
+    public function getDefaultParameters(): array
+    {
+        return [
+            'merchantId' => '',
+            'encKey' => '',
+            'macKey' => ''
+        ];
+    }
+
+    /**
      * @param string $value
      * @return Gateway
      */
@@ -50,12 +64,36 @@ class Gateway extends AbstractGateway
     }
 
     /**
+     * @return string
+     */
+    public function getMerchantId(): string
+    {
+        return $this->getParameter('merchantId');
+    }
+
+    /**
      * @param string $value
      * @return Gateway
      */
     public function setEncKey(string $value): Gateway
     {
         return $this->setParameter('encKey', $value);
+    }
+
+    /**
+     * @return string
+     */
+    public function getEncKey(): string
+    {
+        return $this->getParameter('encKey');
+    }
+
+    /**
+     * @return string
+     */
+    public function getMacKey(): string
+    {
+        return $this->getParameter('macKey');
     }
 
     /**

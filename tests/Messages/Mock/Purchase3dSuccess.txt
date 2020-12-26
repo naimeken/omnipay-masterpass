@@ -1,0 +1,23 @@
+HTTP/1.1 200 OK
+Server: nginx
+Date: Fri, 11 Nov 2020 18:25:28 GMT
+Content-Type: application/json;charset=utf-8
+Content-Length: 2966
+Connection: keep-alive
+Cache-Control: no-cache, no-store
+Request-Id: req_8PDHeZazN2LwML
+Access-Control-Allow-Credentials: true
+Access-Control-Max-Age: 300
+
+<?xml version="1.0"?>
+<CommitPurchaseResponse>
+	<transaction_header>
+		<client_id>10000006</client_id>
+		<request_reference_no>444900193670</request_reference_no>
+		<send_sms>Y</send_sms>
+		<send_sms_language>tur</send_sms_language>
+	</transaction_header>
+	<transaction_body>
+		<retrieval_reference_no>500001059840</retrieval_reference_no>
+	</transaction_body>
+</CommitPurchaseResponse>
