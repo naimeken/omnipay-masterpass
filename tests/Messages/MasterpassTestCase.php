@@ -46,7 +46,7 @@ class MasterpassTestCase extends TestCase
             'transactionReference' => '48019',
             'sendSms' => 'Y',
             'sendSmsLanguage' => 'tur',
-            'clientIp' => '88.119.14.245',
+            'clientIp' => '11.11.11.11',
             'mode' => 'test',
             'bankIca' => '2110',
             'paymentType' => '3d',
