@@ -167,8 +167,8 @@ class MasterpassTestCase extends TestCase
         return [
             'testMode' => true,
             'merchantId' => '34703818',
-            'macKey' => '581A5596067509C35B11F9BEC936EFA9',
-            'encKey' => 'DF17E253BB36608309118DF6483385BB'
+            'macKey' => 'xxxx',
+            'encKey' => 'xxxx'
         ];
     }
 
