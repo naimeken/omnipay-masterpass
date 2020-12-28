@@ -15,19 +15,19 @@ class GatewayTest extends GatewayTestCase
         $this->gateway = new Gateway($this->getHttpClient(), $this->getHttpRequest());
     }
 
-    public function testSupportsPurchase()
+    public function testSupportsPurchase(): void
     {
         $supportsPurchase = $this->gateway->supportsPurchase();
-        $this->assertInternalType('boolean', $supportsPurchase);
+        self::assertInternalType('boolean', $supportsPurchase);
 
         if ($supportsPurchase) {
-            $this->assertInstanceOf(RequestInterface::class, $this->gateway->purchase(['bankIca' => '2110']));
+            self::assertInstanceOf(RequestInterface::class, $this->gateway->purchase(['bankIca' => '2110']));
         } else {
-            $this->assertFalse(method_exists($this->gateway, 'purchase'));
+            self::assertFalse(method_exists($this->gateway, 'purchase'));
         }
     }
 
-    public function testPurchaseParameters()
+    public function testPurchaseParameters(): void
     {
         if ($this->gateway->supportsPurchase()) {
             foreach ($this->gateway->getDefaultParameters() as $key => $default) {
@@ -35,13 +35,13 @@ class GatewayTest extends GatewayTestCase
                     // set property on gateway
                     $getter = 'get' . ucfirst($this->camelCase($key));
                     $setter = 'set' . ucfirst($this->camelCase($key));
-                    $value = uniqid();
+                    $value = uniqid('', false);
                     $this->gateway->$setter($value);
 
                     // request should have matching property, with correct value
                     $request = $this->gateway->purchase(['bankIca' => '2110']);
 
-                    $this->assertSame($value, $request->$getter());
+                    self::assertSame($value, $request->$getter());
                 }
             }
         }
