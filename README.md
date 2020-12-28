@@ -1,4 +1,10 @@
 # omnipay-masterpass
+<p>
+<a href="https://github.com/alegraio/omnipay-masterpass/actions"><img src="https://github.com/alegraio/omnipay-masterpass/workflows/tests/badge.svg" alt="Build Status"></a>
+<a href="https://packagist.org/packages/alegra/omnipay-masterpass"><img src="https://img.shields.io/packagist/dt/alegra/omnipay-masterpass" alt="Total Downloads"></a>
+<a href="https://packagist.org/packages/alegra/omnipay-masterpass"><img src="https://img.shields.io/packagist/v/alegra/omnipay-masterpass" alt="Latest Stable Version"></a>
+<a href="https://packagist.org/packages/alegra/omnipay-masterpass"><img src="https://img.shields.io/packagist/l/alegra/omnipay-masterpass" alt="License"></a>
+</p>
 MasterPass Domestic Integration ( Türkiye ) gateway for Omnipay V3 payment processing library
 
 <a href="https://github.com/thephpleague/omnipay">Omnipay</a> is a framework agnostic, multi-gateway payment
