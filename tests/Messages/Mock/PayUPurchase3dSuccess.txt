@@ -1,0 +1,95 @@
+HTTP/1.1 200 OK
+Server: nginx
+Date: Fri, 11 Nov 2020 18:25:28 GMT
+Content-Type: application/json;charset=utf-8
+Content-Length: 2966
+Connection: keep-alive
+Cache-Control: no-cache, no-store
+Request-Id: req_8PDHeZazN2LwML
+Access-Control-Allow-Credentials: true
+Access-Control-Max-Age: 300
+
+Array
+(
+    [merchantId] => 34703818
+    [transactionReference] => 47974
+    [sendSms] => Y
+    [sendSmsLanguage] => tur
+    [clientIp] => xxxx
+    [bankIca] => 1000
+    [paymentType] => 3d
+    [amount] => 28140
+    [token] => xxx
+    [phone] => xxx
+    [storeKey] => u+f0?H8]O9_|p4]+H=T3
+    [clientId] => xxxx
+    [hash] => 4ee5e4ccf669b26ad333f21a81a21dae
+    [hashParamsVal] => xxxx
+    [optionalParameters] => Array
+        (
+            [order_details] => Array
+                (
+                    [orders] => Array
+                        (
+                            [list_item] => Array
+                                (
+                                    [0] => Array
+                                        (
+                                            [order_product_name] => test
+                                            [order_product_code] => 1
+                                            [order_price] => 100
+                                            [order_vat] =>
+                                            [order_qty] => 1
+                                            [order_product_info] => desc
+                                        )
+
+                                    [1] => Array
+                                        (
+                                            [order_product_name] => test1
+                                            [order_product_code] => 2
+                                            [order_price] => 100
+                                            [order_vat] =>
+                                            [order_qty] => 1
+                                            [order_product_info] => desc1
+                                        )
+
+                                )
+
+                        )
+
+                    [bill_details] => Array
+                        (
+                            [bill_last_name] => test1
+                            [bill_first_name] => test1
+                            [bill_email] => test1@test.com
+                            [bill_phone] => 905555555555
+                            [bill_country_code] => TR
+                            [bill_fax] =>
+                            [bill_address] =>
+                            [bill_address2] =>
+                            [bill_zip_code] => 34250
+                            [bill_city] =>
+                            [bill_state] =>
+                        )
+
+                    [delivery_details] => Array
+                        (
+                            [delivery_last_name] => test1
+                            [delivery_first_name] => test1
+                            [delivery_email] => test1@test.com
+                            [delivery_phone] => 905555555555
+                            [delivery_company] =>
+                            [delivery_country_code] => TR
+                            [delivery_address] =>
+                            [delivery_address2] =>
+                            [delivery_zip_code] => 34250
+                            [delivery_city] =>
+                            [delivery_state] =>
+                        )
+
+                )
+
+        )
+
+    [responseCode] => 0000
+)

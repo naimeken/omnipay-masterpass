@@ -92,40 +92,6 @@ class AuthorizeRequest extends AbstractRequest
      * @param string $value
      * @return AuthorizeRequest
      */
-    public function setEncKey(string $value): AuthorizeRequest
-    {
-        return $this->setParameter('encKey', $value);
-    }
-
-    /**
-     * @return string
-     */
-    public function getEncKey(): ?string
-    {
-        return $this->getParameter('encKey');
-    }
-
-    /**
-     * @param string $value
-     * @return AuthorizeRequest
-     */
-    public function setMacKey(string $value): AuthorizeRequest
-    {
-        return $this->setParameter('macKey', $value);
-    }
-
-    /**
-     * @return string
-     */
-    public function getMacKey(): ?string
-    {
-        return $this->getParameter('macKey');
-    }
-
-    /**
-     * @param string $value
-     * @return AuthorizeRequest
-     */
     public function setUserId(string $value): AuthorizeRequest
     {
         return $this->setParameter('userId', $value);
