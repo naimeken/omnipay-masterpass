@@ -145,6 +145,7 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
     {
         return $this->getParameter('merchantId');
     }
+
     /**
      * @param string $value
      * @return AuthorizeRequest
@@ -178,6 +179,7 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
     {
         return $this->getParameter('macKey');
     }
+
     /**
      * @param string $value
      * @return AbstractRequest
@@ -280,6 +282,16 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
         return $this->setParameter('hash', $value);
     }
 
+    public function getOrderNo(): ?string
+    {
+        return $this->getParameter('orderNo');
+    }
+
+    public function setOrderNo(string $value): AbstractRequest
+    {
+        return $this->setParameter('orderNo', $value);
+    }
+
     /**
      * @return array
      */
@@ -296,7 +308,7 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
 
         $bodyParams = [
             'amount' => $this->getAmountInteger(),
-            'order_no' => $this->getTransactionReference(),
+            'order_no' => $this->getOrderNo() ?? $this->getTransactionReference(),
             'payment_type' => $this->getPaymentType(),
             'bank_ica' => $this->getBankIca(),
             'token' => $this->getToken(),
